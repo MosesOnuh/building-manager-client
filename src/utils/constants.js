@@ -1,8 +1,10 @@
 
 
 export const paginationPageSize = 8;
-export const accessToken = "tokenA";
-export const refreshToken = "tokenR";
+// export const accessToken = "tokenA";
+// export const refreshToken = "tokenR";
+export const accessToken = "accessToken";
+export const refreshToken = "refreshToken";
 
 // export const constructionPhases = {
 //     PreConstruction: 1,

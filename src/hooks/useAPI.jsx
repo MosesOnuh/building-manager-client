@@ -1,7 +1,6 @@
 import { useState } from "react" ;
-import api from "../utils/api";
-// import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAxios from "./useAxios";
 
 
 const useAPI = () => {
@@ -14,6 +13,8 @@ const useAPI = () => {
     const navigateToLoginPage = () => {
       navigate("/login");
     };
+     
+    const api  = useAxios();
 
     const get = async (url) => {
         try {
@@ -24,10 +25,10 @@ const useAPI = () => {
         } catch (error) {
             setLoading(false);
             setError(error?.response?.data);
-            if (error?.response?.status === 401){
-                setError(null);
-                navigateToLoginPage();
-            }
+            // if (error?.response?.status === 401){
+            //     setError(null);
+            //     navigateToLoginPage();
+            // }
             throw error;
         }
     }
@@ -62,10 +63,10 @@ const useAPI = () => {
       } catch (error) {
         setLoading(false);
         setError(error?.response?.data);
-        if (error?.response?.status === 401) {
-          setError(null);
-          navigateToLoginPage();
-        }
+        // if (error?.response?.status === 401) {
+        //   setError(null);
+        //   navigateToLoginPage();
+        // }
         throw error;
       }
     };
@@ -79,9 +80,9 @@ const useAPI = () => {
         } catch (error) {
             setLoading(false);
             setError(error?.response?.data);
-            if (error?.response?.status === 401) {
-              navigateToLoginPage();
-            }
+            // if (error?.response?.status === 401) {
+            //   navigateToLoginPage();
+            // }
             
             // throw error;
         }

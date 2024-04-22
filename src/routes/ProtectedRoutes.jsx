@@ -1,8 +1,8 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { accessToken } from "../utils/constants";
+import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
+// import { accessToken } from "../utils/constants";
 import { useEffect, useRef } from "react";
 import {
-  ChakraProvider, 
+  ChakraProvider,
   useDisclosure,
   Button,
   Input,
@@ -19,47 +19,25 @@ import {
   DrawerContent,
   DrawerCloseButton,
 } from "@chakra-ui/react";
+import useAuth from "../hooks/useAuth";
 
 export const ProtectedRoute = () => {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
-  // const btnRef = useRef();
+  const { auth } = useAuth();
+  const location = useLocation();
 
-  const token  = sessionStorage.getItem(accessToken)
-  const navigate = useNavigate();
-  const navigateToLoginPage = () => {
-    navigate("/login");
-  };
- 
-  
-
-//   // Check if the user is authenticated
-//   if (!token) {
-//     // If not authenticated, redirect to the login page
-//     return <Navigate to="/login" />;
-//   }
-
-
-  // Check if the user is authenticated
-
-  useEffect(() =>{
-    if (!token) {
-      navigateToLoginPage();
-    }
-  }, [token])
-
-  // If authenticated, render the child routes
   return (
     <>
-      {token && (
-        <>      
+      {auth?.accessToken ? (
+        <>
           <SideBar />
           <Outlet />
         </>
+      ) : (
+        <Navigate to="/login" state={{ from: location }} replace />
       )}
     </>
-  ); 
+  );
 };
-
 
 function SideBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -107,8 +85,6 @@ function SideBar() {
     </ChakraProvider>
   );
 }
-
-
 
 // function SideBar() {
 //   const { isOpen, onOpen, onClose } = useDisclosure();
