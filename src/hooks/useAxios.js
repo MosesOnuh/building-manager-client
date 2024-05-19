@@ -1,4 +1,4 @@
-import api from "../utils/api";
+import {privateApi} from "../utils/api";
 import useAuth from "./useAuth";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
@@ -8,7 +8,7 @@ const useAxios = () => {
     const { auth } = useAuth();
     
     useEffect(() =>{
-        api.interceptors.request.use(
+        privateApi.interceptors.request.use(
             config => {
                 if (!config.headers['Authorization']){
                     config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
@@ -17,7 +17,7 @@ const useAxios = () => {
             }, (error) => Promise.reject(error)
         );
 
-        api.interceptors.response.use(
+        privateApi.interceptors.response.use(
             response => response,
             async (error) => {
                 const prevRequest = error?.config;
@@ -26,11 +26,11 @@ const useAxios = () => {
                     const refToken = sessionStorage.getItem('refreshToken');
                     console.log("token passed:  " + refToken);
                     const newAccessToken = await refresh({"refreshToken": refToken});
-                    console.log("--------new token request " + newAccessToken)
+                    // console.log("--------new token request " + newAccessToken)
                     // const newToken = sessionStorage.getItem('accessToken');
                     // prevRequest.headers['Authorization'] = `Bearer ${newToken}`;
                     prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                    return api(prevRequest);
+                    return privateApi(prevRequest);
                 }
                 return Promise.reject(error);
             }
@@ -39,7 +39,7 @@ const useAxios = () => {
     },[auth, refresh])
 
 
-    return api;
+    return privateApi;
 }
 
 export default useAxios;

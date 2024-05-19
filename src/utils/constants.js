@@ -13,9 +13,9 @@ export const refreshToken = "refreshToken";
 // }
 
 export const constructionPhasesValue = {
-    1 : "Pre Construction",
+    1 : "Pre-Construction",
     2 : "Construction",
-    3 : "Post Construction",
+    3 : "Post-Construction",
 }
 
 export const userProfession = {

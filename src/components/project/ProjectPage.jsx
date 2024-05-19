@@ -56,29 +56,46 @@ const ProjectsPage = () => {
       )}
       {!error && !loading && projectItems.length > 0 && (
         <>
-          <table className="table-green">
-            <thead>
-              <tr>
-                {/* <th>S/N</th> */}
-                <th>Project Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                {/* Add more table headers if needed */}
-              </tr>
-            </thead>
-            <tbody>
-              {/* {!error && data?.data.map((item) => ( */}
-              {projectItems.map((item) => (
-                <tr key={item.id} onClick={() => NavigateToActivity(item.id)}>
-                  <td>{item.name}</td>
-                  <td>{GetDate(item.startDate)}</td>
-                  <td>{GetDate(item.endDate)}</td>
-                  <td></td>
-                  {/* Add more table cells if needed */}
+          {/* <table className="table-green"> */}
+          <div className="tableContainer w-4/5 mx-auto">
+            <table className=" w-full">
+              <thead>
+                <tr className="bg-blue-100">
+                  <th className=" py-2 border  SN">S/N</th>
+                  <th className="projectName border">Project Name</th>
+                  <th className="projStartDate border">Start Date</th>
+                  <th className="projEndDate border">End Date</th>
+                  {/* Add more table headers if needed */}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {/* {!error && data?.data.map((item) => ( */}
+                {projectItems.map((item) => (
+                  <tr
+                    key={item.id}
+                    onClick={() => NavigateToActivity(item.id)}
+                    className="hover:bg-gray-100 focus:bg-gray:500"
+                  >
+                    <td className="SN border-b border-black-900 py-2 text-center">
+                      1
+                    </td>
+                    <td className="projectName border py-2 pl-3 pr-1 ">
+                      {item.name}
+                    </td>
+                    <td className="projStartDate border py-2 px-1 text-center">
+                      {GetDate(item.startDate)}
+                    </td>
+                    <td className="projEndDate border-t border-b py-2 px-1 text-center">
+                      {GetDate(item.endDate)}
+                    </td>
+                    {/* <td></td> */}
+                    {/* Add more table cells if needed */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
           {/* <Pagination
               className="pagination-bar"
               currentPage={currentPage}

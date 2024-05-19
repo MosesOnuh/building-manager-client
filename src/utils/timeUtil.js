@@ -1,11 +1,3 @@
-
-
-
-// export const GetDate = (time) =>{
-//     const date = new Date(time);
-//     return date.toLocaleDateString();
-// }
-
 export const GetDate = (time) => {
   const date = new Date(time);
   const options = { day: 'numeric', month: 'long', year: 'numeric' };

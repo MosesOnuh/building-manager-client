@@ -1,18 +1,15 @@
-.navbar{
+{{/* .navbar{
     display: flex;
    
     justify-content: space-between;
     background-color: #FAECEC;
     padding: 20px;
-    {{/* background-color: rgb(250, 236, 236, 100%); */}}
-    {{/* background-color: blue; */}}
 }
 
 .nav-items{
     display: flex;
     flex-direction: row;
     column-gap: 30px;
-    {{/* background-color: blue; */}}
 }
 
 .nav-item{
@@ -29,6 +26,5 @@
 .center{
     display: block;
     margin: 20px auto;
-    {{/* background-color: green; */}}
     width:fit-content;
-}
+} */}}

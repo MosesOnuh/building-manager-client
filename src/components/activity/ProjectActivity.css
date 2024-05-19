@@ -1,4 +1,4 @@
-.error-alert{
+{{/* .error-alert{
     background-color: red;
     width: 100%;
     max-width: 700px;
@@ -7,9 +7,20 @@
     display: grid;
     place-items: center;
     padding: 10px 0;
-}
+} */}}
 
 {{/* .FormBackground{
     position: absolute;
     background: green;
+} */}}
+
+{{/* .activity-display-modal-container {
+  background: white;
+  padding: 20px 50px;
+  padding-bottom: 40px;
+  border-radius: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 70%;
+  max-height: 89%;
+  overflow-y: auto; 
 } */}}

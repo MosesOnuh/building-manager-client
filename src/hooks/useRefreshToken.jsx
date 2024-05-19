@@ -1,13 +1,18 @@
 import useAuth from "./useAuth";
-import axios from "axios";
+// import axios from "axios";
+import { api } from "../utils/api";
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
 
   const refresh = async (data) => {
     try {
-      const response = await axios.post(
-        "https://localhost:7129/api/User/generateTokens",
+      // const response = await axios.post(
+      //   "https://localhost:7129/api/User/generateTokens",
+      //   data
+      // );
+      const response = await api.post(
+        "/User/generateTokens",
         data
       );
       // console.log("-----reponse value in refresh ++++++++");
@@ -24,9 +29,10 @@ const useRefreshToken = () => {
       return value;
 
     } catch (error) {
+      setAuth({});
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");
-      setAuth({});
+      
     }
 
   };
