@@ -1,46 +1,58 @@
-import { Link } from "react-router-dom";
-import "./DefaultNav.css";
+import { NavLink } from "react-router-dom";
+// import "./DefaultNav.css";
 import { accessToken, refreshToken } from "../../utils/constants";
 import { useEffect, useState } from "react";
+import useAuth from "../../hooks/useAuth";
 
 const DefaultNav = () => {
-  const [auth, setAuth] = useState(null)
-const token = sessionStorage.getItem(accessToken);
-  useEffect(() =>{    
-    setAuth(token)
-  }, [token])
-  // const token = sessionStorage.getItem(accessToken);
-  const logoutUser = () => {
-    setAuth(null)
-    sessionStorage.removeItem(accessToken);
-    sessionStorage.removeItem(refreshToken);
-  }
+  const {
+    auth
+  } = useAuth();
+
+  // let token = null
+
+  // useEffect (()=>{
+  //   token = auth?.accessToken;
+  // }, [auth])
+
+  const linkStyle = ({ isActive }) =>
+    isActive
+      ? "bg-black text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
+      : "text-white hover:bg-gray-900 px-3 py-2 rounded-lg";
+
+    // isActive
+    //   ? "text-white border-b-2 border-solid border-black px-3 py-2"
+    //   : "text-white hover:border-b-2 border-solid border-black px-3 py-2";
+  
   return (
     <>
-       
-        <div class="navbar">
-          <div class="navlogo-container">
-            <Link to="/">
-              <p>Building Manager</p>
-            </Link>
-          </div>
-          <ul class="nav-items">
-            <Link to="/login" class="nav-item">
-              <li>
-                {/* <a href="./about.html"> Sign In </a> */}
+      {!auth?.accessToken && (
+        <>
+          {/* <nav className="navbar"> */}
+          <nav className="bg-indigo-700 px-2 flex py-3 justify-between sm:px-10">
+            {/* <div className="navlogo-container"> */}
+            <NavLink
+              to="/"
+              className="md:text-2xl text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
+            >
+              Building Manager
+            </NavLink>
+            {/* </div> */}
+            <div className="nav-items gap-x-2 flex md:gap-x-4">
+              <NavLink className={linkStyle} to="/login">
+                {/* {auth?.accessToken ? "" : "Sign In"} */}
                 Sign In
-              </li>
-            </Link>
-            <Link to="/signup" class="nav-item">
-              <li>
-                {/* <a href="./contact.html"> Sign Up </a> */}
+              </NavLink>
+              <NavLink to="/signup" className={linkStyle}>
                 Sign Up
-              </li>
-            </Link>
-          </ul>
-        </div>
- </>)
- 
+                {/* {auth?.accessToken ? "Sign Out" : "Sign Up"} */}
+              </NavLink>
+            </div>
+          </nav>
+        </>
+      )}
+    </>
+  );
 };
 
 export default DefaultNav;

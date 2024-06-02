@@ -1,25 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import useAPI from "../../hooks/useAPI";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Loader from "../loading/Loading";
-// import { paginationPageSize, userProfession } from "../../utils/constants";
 import Pagination from "../pagination/Pagination";
-import { GetDate } from "../../utils/timeUtil";
+import { ApiDateFormat, GetDate } from "../../utils/timeUtil";
 import "./OtherProActivity.css";
 import {
   paginationPageSize,
-  userProfession,
+  // userProfession,
   activityStatus,
   constructionPhasesValue,
+  AddSerialNumber,
+  activityStatusKey,
 } from "../../utils/constants";
+import OtherProTable from "../utility/table/OtherProTable";
+import NonFound from "../utility/NonFound";
+import GetErrorNotification from "../utility/GetErrorNotification";
+import { FaRemoveFormat } from "react-icons/fa";
+import {
+  // TextInput,
+  InputField,
+  TextAreaField,
+  SelectInputField,
+} from "../utility/InputFields";
+import GeneralBtn from "../utility/buttons/MainBtns";
+import FormItemDisplay, {
+  FormItemDisplayBig,
+} from "../utility/FormItemDisplay";
+// import { FaXmark } from "react-icons/fa6";
+import { format } from "date-fns";
+import AppModal from "../utility/Modals/Modal";
+import {
+  SmallDefaultBtn,
+  DeleteBtn,
+  DownloadBtn,
+} from "../utility/buttons/SmallBtns";
+import { toast } from "react-toastify";
+import CausionModal from "../utility/Modals/CausionModal";
 
 const OtherProActivity = ({ userInfo }) => {
-  // const [projectItems, setProjectItems] = useState([]);
   const [preConstCurrentPage, setPreConstCurrentPage] = useState(1);
   const [constCurrentPage, setConstCurrentPage] = useState(1);
   const [postConstCurrentPage, setPostConstCurrentPage] = useState(1);
-  // const [memberDetail, setMemberDetail] = useState(null);
 
   const [preConsPhaseData, setPreConsPhaseData] = useState(null);
   const [consPhaseData, setConsPhaseData] = useState(null);
@@ -27,15 +50,23 @@ const OtherProActivity = ({ userInfo }) => {
   const [viewForm, setViewForm] = useState(false);
   const [viewDetail, setViewDetail] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [refreshPage, SetRefreshPage] = useState(false);
 
-  const removeSelectedActivity = () => setSelectedActivity(null);
-  const onCloseDetail = () => {
+  const onCloseDetail = (isRefresh) => {
     setSelectedActivity(null);
     setViewDetail(false);
+    if (isRefresh) {
+      SetRefreshPage(!refreshPage);
+    }
   };
+
   const displayActivity = (item) => {
     setSelectedActivity(item);
     setViewDetail(true);
+  };
+
+  const closeForm = () => {
+    setViewForm(false);
   };
 
   const {
@@ -67,14 +98,13 @@ const OtherProActivity = ({ userInfo }) => {
         const response = await preConsGet(preConsUrl);
         setPreConsPhaseData(response);
         preConsSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setPreConsPhaseData(null);
       }
     };
 
     fetchPreConsData();
-  }, [projectId, preConstCurrentPage, userInfo]);
+  }, [projectId, preConstCurrentPage, userInfo, refreshPage]);
 
   useEffect(() => {
     let consUrl = `https://localhost:7129/api/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}`;
@@ -84,14 +114,13 @@ const OtherProActivity = ({ userInfo }) => {
         const response = await consGet(consUrl);
         setConsPhaseData(response);
         consSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setConsPhaseData(null);
       }
     };
 
     fetchConsData();
-  }, [projectId, constCurrentPage, userInfo]);
+  }, [projectId, constCurrentPage, userInfo, refreshPage]);
 
   useEffect(() => {
     let postConsUrl = `https://localhost:7129/api/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}`;
@@ -101,261 +130,169 @@ const OtherProActivity = ({ userInfo }) => {
         const response = await postConsGet(postConsUrl);
         setPostConsPhaseData(response);
         postConsSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setPostConsPhaseData(null);
       }
     };
 
     fetchPostConsData();
-  }, [projectId, postConstCurrentPage, userInfo]);
-
-  const closeForm = () => {
-    setViewForm(false);
-  };
+  }, [projectId, postConstCurrentPage, userInfo, refreshPage]);
 
   return (
     <>
-      {/* <div>Project Activities</div> */}
       <button
         onClick={() => {
           setViewForm(true);
         }}
-        class="nav-item right-btn"
+        className="mt-3 block ml-auto border-2 border-gray-200 text-black h-fit py-1 px-3 sm:px-4 rounded-lg hover:bg-blue-200 shadow-l text-xs md:text-sm lg:text-base"
       >
         Create Activity
       </button>
-      {preConsError && (
-        <div className="error-alert">
-          <p>{preConsError?.message}</p>
-        </div>
-      )}
       {(preConsLoading || consLoading) && <Loader />}
-      {/* <></> */}
       <>
-        <div>
-          <p>{`Project Name: ${userInfo?.projectName}` || ""}</p>
-          <p>{`Name: ${userInfo?.firstName || ""}  ${userInfo?.lastName || ""}`}</p>
-          <p>{`Role: ${userProfession[userInfo?.profession]}` || ""}</p>
-        </div>
         <div className="activity-tables">
           <div className="phase-wrapper">
-            <p> Pre Construction</p>
-            {preConsPhaseData && !preConsLoading && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                          {/* Add more table headers if needed */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {!error && data?.data.map((item) => ( */}
-                        {preConsPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.name}</td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={preConstCurrentPage}
-                      totalCount={preConsPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setPreConstCurrentPage(page)}
+            {preConsPhaseData?.data?.length > 0 &&
+              !preConsLoading &&
+              !preConsError && (
+                <>
+                  <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
+                    Pre-Construction Phase Activities
+                  </p>
+                  <div
+                    style={{ width: "98%" }}
+                    className="tableContainer mx-auto mb-3"
+                  >
+                    <OtherProTable
+                      items={AddSerialNumber(
+                        preConsPhaseData?.data,
+                        preConstCurrentPage,
+                        paginationPageSize
+                      )}
+                      displayActivity={displayActivity}
                     />
-                  </>
-                </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+                  </div>
+                  <Pagination
+                    className="pagination-bar"
+                    currentPage={preConstCurrentPage}
+                    totalCount={preConsPhaseData?.pagination?.totalCount}
+                    pageSize={paginationPageSize}
+                    onPageChange={(page) => setPreConstCurrentPage(page)}
+                  />
+                </>
+              )}
+            {preConsPhaseData?.data?.length == 0 && !preConsLoading && (
+              <div className="sm:my-10">
+                <NonFound
+                  customMessage={
+                    "User has not created any Preconstruction Activity"
+                  }
+                />
+              </div>
+            )}
+            {preConsError && !preConsLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Pre-Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
-          <div className="phase-wrapper">
-            <p>Construction phase</p>
-            {consPhaseData && !consLoading && !consError && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                          {/* Add more table headers if needed */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {!error && data?.data.map((item) => ( */}
-                        {consPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.name}</td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={constCurrentPage}
-                      totalCount={consPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setConstCurrentPage(page)}
-                    />
-                  </>
+          <div className="phase-wrapper mt-10">
+            {consPhaseData?.data?.length > 0 && !consLoading && !consError && (
+              <>
+                <p className="font-bold text-xs md:text-sm lg:text-base my-3">
+                  Construction Phase Activities
+                </p>
+                <div
+                  style={{ width: "98%" }}
+                  className="tableContainer mx-auto mb-3"
+                >
+                  <OtherProTable
+                    items={AddSerialNumber(
+                      consPhaseData?.data,
+                      constCurrentPage,
+                      paginationPageSize
+                    )}
+                    displayActivity={displayActivity}
+                  />
                 </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+                <Pagination
+                  className="pagination-bar"
+                  currentPage={constCurrentPage}
+                  totalCount={consPhaseData?.pagination?.totalCount}
+                  pageSize={paginationPageSize}
+                  onPageChange={(page) => setConstCurrentPage(page)}
+                />
+              </>
+            )}
+            {consPhaseData?.data?.length == 0 && !consLoading && !consError && (
+              <div className="sm:my-10">
+                <NonFound
+                  customMessage={
+                    "User has not created any Construction Activity"
+                  }
+                />
+              </div>
+            )}
+            {consError && !consLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
-          <div className="phase-wrapper">
-            <p>Post Construction phase</p>
-            {postConsPhaseData && !postConsLoading && !postConsError && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {postConsPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.name}</td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={postConstCurrentPage}
-                      totalCount={postConsPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setPostConstCurrentPage(page)}
+          <div className="phase-wrapper mt-10">
+            {postConsPhaseData?.data?.length > 0 &&
+              !postConsLoading &&
+              !postConsError && (
+                <>
+                  <p className="font-bold text-xs md:text-sm lg:text-base my-3">
+                    Post-Construction Phase Activities
+                  </p>
+                  <div
+                    style={{ width: "98%" }}
+                    className="tableContainer mx-auto mb-3"
+                  >
+                    <OtherProTable
+                      items={AddSerialNumber(
+                        postConsPhaseData?.data,
+                        postConstCurrentPage,
+                        paginationPageSize
+                      )}
+                      displayActivity={displayActivity}
                     />
-                  </>
+                  </div>
+                  <Pagination
+                    className="pagination-bar"
+                    currentPage={postConstCurrentPage}
+                    totalCount={postConsPhaseData?.pagination?.totalCount}
+                    pageSize={paginationPageSize}
+                    onPageChange={(page) => setPostConstCurrentPage(page)}
+                  />
+                </>
+              )}
+            {postConsPhaseData?.data?.length == 0 &&
+              !postConsLoading &&
+              !postConsError && (
+                <div className="sm:my-10">
+                  <NonFound
+                    customMessage={
+                      "User has not created any Post-Construction Activity"
+                    }
+                  />
                 </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+              )}
+            {postConsError && !postConsLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Post-Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
         </div>
-
-        {/* <p>{memberLoading}</p> */}
       </>
 
       {viewForm && (
@@ -369,7 +306,7 @@ const OtherProActivity = ({ userInfo }) => {
         <Modal
           onCloseModal={onCloseDetail}
           selectedActivity={selectedActivity}
-          removeSelectedActivity={removeSelectedActivity}
+          pageRefresh={SetRefreshPage}
         />
       )}
     </>
@@ -378,7 +315,6 @@ const OtherProActivity = ({ userInfo }) => {
 
 const CreateActivityModal = ({ onClose, projectId }) => {
   const [activityData, setActivityData] = useState({
-    // projectId: "",
     name: "",
     description: "",
     projectPhase: "",
@@ -414,7 +350,6 @@ const CreateActivityModal = ({ onClose, projectId }) => {
       ];
       if (file && !allowedTypes.includes(file.type)) {
         setFormError("Only word, pdf, and image files are allowed.");
-        // setActivityData({ ...activityData, file: null });
         return;
       }
       setActivityData({ ...activityData, [name]: file });
@@ -459,9 +394,6 @@ const CreateActivityModal = ({ onClose, projectId }) => {
       formData.append("endDate", activityData.endDate);
       formData.append("file", activityData.file);
 
-      // https://localhost:7129/api/Activity/OtherPro/CreateActivity
-
-      // try {}catch(error){}
       const response = await postFileReq(
         "/Activity/OtherPro/CreateActivity",
         formData
@@ -479,7 +411,6 @@ const CreateActivityModal = ({ onClose, projectId }) => {
 
   const closeModalForm = () => {
     setActivityData({
-      // projectId: '',
       name: "",
       description: "",
       projectPhase: "",
@@ -585,16 +516,41 @@ const CreateActivityModal = ({ onClose, projectId }) => {
           </div>
         </div>
       </div>
-      {/* )} */}
     </>
   );
 };
 
-const Modal = ({ onCloseModal, selectedActivity, removeSelectedActivity }) => {
-  const [approvalSuccess, setApprovalSuccess] = useState(null);
-  const [rejectionSuccess, setRejectionSuccess] = useState(null);
-  const [editDates, setEditDates] = useState(null)
-  const [editActivity, setEditActivity] = useState(null);
+const Modal = ({ onCloseModal, selectedActivity }) => {
+  const [editActivity, setEditActivity] = useState(false);
+  const [editActualDates, setEditActualDates] = useState(false);
+  const [formData, setFormData] = useState({
+    ...selectedActivity,
+    startDate: format(new Date(selectedActivity.startDate), "yyyy-MM-dd"),
+    endDate: format(new Date(selectedActivity.endDate), "yyyy-MM-dd"),
+    actualStartDate:
+      selectedActivity.actualStartDate &&
+      format(new Date(selectedActivity.actualStartDate), "yyyy-MM-dd"),
+    actualEndDate:
+      selectedActivity.actualEndDate &&
+      format(new Date(selectedActivity.actualEndDate), "yyyy-MM-dd"),
+  });
+  const [fileInputDisplay, setFileInputDisplay] = useState(false);
+  const [activityFile, setActivityFile] = useState(null);
+  const [activityChange, setActivityChange] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [fileDelete, setFileDelete] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleModalClose = () => {
+    if (activityChange) {
+      onCloseModal(true);
+    } else {
+      onCloseModal(false);
+    }
+  };
 
   const {
     projectId,
@@ -606,232 +562,571 @@ const Modal = ({ onCloseModal, selectedActivity, removeSelectedActivity }) => {
     actualStartDate,
     actualEndDate,
     description,
-    phase,
-    // firstName,
-    // lastName,
-    // profession,
+    projectPhase,
     fileName,
-  } = selectedActivity;
+  } = formData;
 
   const {
-    loading: downloadLoading,
-    error: downloadError,
+    error: downloadFileError,
     setErrToNull: downloadSetErrToNull,
     downloadFile: downloadGet,
   } = useAPI();
 
-  // const {
-  //   loading: approvalLoading,
-  //   error: approvalError,
-  //   setErrToNull: approvalSetErrToNull,
-  //   patch: approvalPatch,
-  // } = useAPI();
+  const {
+    error: deleteError,
+    setErrToNull: deleteSetErrToNull,
+    deleteRequest: deleteFile,
+  } = useAPI();
 
-  // const {
-  //   loading: rejectionLoading,
-  //   error: rejectionError,
-  //   setErrToNull: rejectionSetErrToNull,
-  //   patch: rejectionPatch,
-  // } = useAPI();
+  const {
+    error: addFileError,
+    setErrToNull: addFileSetErrToNull,
+    patchFileReq: addFile,
+  } = useAPI();
 
-  // const ApproveActivity = () => {
-  //   approvalSetErrToNull();
-  //   const reqData = {
-  //     activityId: activityId,
-  //     projectId: projectId,
-  //     statusAction: 2,
-  //   };
+  const {
+    error: actualDatesError,
+    setErrToNull: actualDatesSetErrToNull,
+    patch: updateActualDatesReq,
+  } = useAPI();
 
-  //   const response = approvalPatch(
-  //     "https://localhost:7129/api/Activity/PM/ActivityApproval",
-  //     reqData
-  //   );
+  const {
+    error: activityUpdateError,
+    setErrToNull: activityUpdateSetErrToNull,
+    patch: activityUpdateReq,
+  } = useAPI();
 
-  //   setApprovalSuccess(response);
-  //   setTimeout(() => {
-  //     setApprovalSuccess(null);
-  //     removeSelectedActivity(null);
-  //     onClose();
-  //   }, 2000);
-  // };
+  const {
+    error: activityToDoneError,
+    setErrToNull: activityToDoneReqSetErrToNull,
+    patch: activityToDoneReq,
+  } = useAPI();
 
-  // const RejectActivity = () => {
-  //   rejectionSetErrToNull();
-  //   const reqData = {
-  //     activityId: activityId,
-  //     projectId: projectId,
-  //     statusAction: 3,
-  //   };
+  const {
+    error: deleteActivityError,
+    setErrToNull: deleteActivitySetErrToNull,
+    deleteRequest: deleteActivityReq,
+  } = useAPI();
 
-  //   const response = rejectionPatch(
-  //     "https://localhost:7129/api/Activity/PM/ActivityApproval",
-  //     reqData
-  //   );
+  const handleActivityDelete = async () => {
+    deleteActivitySetErrToNull();
+    try {
+      toastId.current = toast.loading("Loading...");
+      await deleteActivityReq(
+        `/Activity/OtherPro/DeleteActivity/${projectId}/${id}`,
+        fileName
+      );
 
-  //   setRejectionSuccess(response);
-  //   setTimeout(() => {
-  //     setRejectionSuccess(null);
-  //     removeSelectedActivity(null);
-  //     onClose();
-  //   }, 2000);
-  // };
+      toast.update(toastId.current, {
+        render: "Activity Deleted Successfully",
+        type: "success",
+        isLoading: false,
+      });
 
-  useEffect(() => {
-    if (downloadError)
-      var timeInterval = setInterval(() => {
-        downloadSetErrToNull();
-      }, 2000);
+      setActivityChange(true);
+      setFormData(null);
+      handleModalClose();
 
-    return () => clearInterval(timeInterval);
-  }, [downloadError]);
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: deleteActivityError?.message || "Error Deleting Activity",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
 
-  const downloadActivityFile = () => {
+  const handleActivityToDone = async () => {
+    activityToDoneReqSetErrToNull();
+    const reqbody = {
+      activityId: id,
+      projectId,
+    };
+
+    try {
+      toastId.current = toast.loading("Loading...");
+      await activityToDoneReq(
+        `/Activity/OtherPro/UpdateActivityToDone`,
+        reqbody
+      );
+
+      setFormData({ ...formData, status: activityStatusKey.Done});
+      setActivityChange(true);
+      toast.update(toastId.current, {
+        render: "Updated Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: activityToDoneError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const handleActivityUpdate = async () => {
+    activityUpdateSetErrToNull();
+    const reqbody = {
+      activityId: id,
+      projectId,
+      name,
+      description,
+      projectPhase,
+      startDate: ApiDateFormat(startDate),
+      endDate: ApiDateFormat(endDate),
+    };
+    try {
+      toastId.current = toast.loading("Loading...");
+      await activityUpdateReq(
+        `/Activity/OtherPro/UpdatePendingActivityDetails`,
+        reqbody
+      );
+      setEditActivity(false);
+      setActivityChange(true);
+      toast.update(toastId.current, {
+        render: "Updated Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: activityUpdateError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const handleActualDatesUpdate = async () => {
+    actualDatesSetErrToNull();
+    const reqbody = {
+      activityId: id,
+      projectId,
+      actualStartDate: ApiDateFormat(actualStartDate),
+      actualEndDate: ApiDateFormat(actualEndDate),
+    };
+    try {
+      toastId.current = toast.loading("Loading...");
+      await updateActualDatesReq(
+        `/Activity/OtherPro/UpdateActivityActualDates`,
+        reqbody
+      );
+      setEditActualDates(false);
+      setActivityChange(true);
+      toast.update(toastId.current, {
+        render: "Updated Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: actualDatesError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const toastId = useRef(null);
+  const handleActivityFileDownload = async () => {
     downloadSetErrToNull();
-    downloadGet(
-      `/Activity/PM/DownloadActivityFile?projectId=${projectId}&ActivityId=${id}&FileName=${fileName}`,
-      fileName
-    );
+    try {
+      toastId.current = toast.loading("Downloading...");
+      await downloadGet(
+        `/Activity/OtherPro/DownloadActivityFile?projectId=${projectId}&ActivityId=${id}&FileName=${fileName}`,
+        fileName
+      );
+      toast.update(toastId.current, {
+        render: "Download Successful",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: downloadFileError?.message || "Error Downloading File",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const handleActivityFileDelete = async () => {
+    deleteSetErrToNull();
+    try {
+      toastId.current = toast.loading("Deleting File...");
+      await deleteFile(
+        `/Activity/OtherPro/DeletePendingActivityFile?projectId=${projectId}&ActivityId=${id}&FileName=${fileName}`
+      );
+      setActivityChange(true);
+      setFormData({ ...formData, fileName: null });
+      toast.update(toastId.current, {
+        render: "File Deleted Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setDeleteModal(false);
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: deleteError?.message || "Error Deleting File",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setActivityFile(file);
+  };
+
+  const handleAddActivityFile = async () => {
+    addFileSetErrToNull();
+    try {
+      const fileData = new FormData();
+      fileData.append("projectId", projectId);
+      fileData.append("activityId", id);
+      fileData.append("file", activityFile);
+
+      toastId.current = toast.loading("Adding File...");
+      await addFile("/Activity/OtherPro/AddActivityFile", fileData);
+      setActivityChange(true);
+      setFormData({ ...formData, fileName: activityFile.name });
+      setFileInputDisplay(false);
+
+      toast.update(toastId.current, {
+        render: "File Added Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: addFileError?.message || "Error Adding File",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
   };
 
   return (
-    <div className="activity-modal-overlay">
-      {/* <div className="activity-modal-container" onClick={(e) => e.stopPropagation()}> */}
-      <div className="activity-display-modal-container ">
-        {/* {rejectionSuccess && !rejectionLoading && (
-          <p>Project Successfully Rejected</p>
+    <AppModal onCloseModal={handleModalClose}>
+      <>
+        {deleteModal && (
+          <CausionModal
+            message={
+              fileDelete
+                ? `Are you sure you want to delete the file ${fileName}`
+                : `Are you sure you want to delete the activity with ID: ${id}`
+            }
+            onCloseModal={() => {
+              setFileDelete(false);
+              setDeleteModal(false);
+            }}
+            handleAction={
+              fileDelete ? handleActivityFileDelete : handleActivityDelete
+            }
+          />
         )}
-        {rejectionError && !rejectionLoading && (
-          <div className="error-alert">
-            <p>{rejectionError?.message}</p>
-          </div>
-        )}
+        <div className=" flex justify-between items-center flex-wrap  gap-4">
+          <h2 className="font-semibold text-2xl">Activity</h2>
 
-        {approvalSuccess && !approvalLoading && (
-          <p>Project Successfully Approved</p>
-        )}
-        {approvalError && !approvalLoading && (
-          <div className="error-alert">
-            <p>{approvalError?.message}</p>
-          </div>
-        )}
-        {downloadError && !downloadLoading && (
-          <div className="error-alert">
-            <p>{downloadError?.message}</p>
-          </div>
-        )} */}
-        <div className="activity-modal-header">
-          <h2>Activity</h2>
-
-          {/* <span>Activity ID: {activityId}</span> */}
-          <button onClick={onCloseModal}>Close</button>
+          <p className="text-xs md:text-sm lg:text-base">ID: {id}</p>
         </div>
         <div className="pm-modal-body">
-          <div className="">
-            <div className="div">
-              <p>Name:</p>
-              <p>{name}</p>
+          <div className="flex justify-between mt-5 flex-wrap gap-4">
+            <div className="w-full lg:w-70">
+              {editActivity ? (
+                <TextAreaField
+                  InputValue={name}
+                  InputTitle={"Name"}
+                  InputName={"name"}
+                  OnChange={handleChange}
+                />
+              ) : (
+                <FormItemDisplay title={"Name"} value={name} />
+              )}
             </div>
-            <div className="div">
-              <p>Status:</p>
-              <p>
-                {/* {status === 1
-                  ? "Pending"
-                  : status === 2
-                  ? "Approved"
-                    ? status === 3
-                    : "Rejected"
-                  : "Done"} */}
-                {activityStatus[status]}
-              </p>
+            <div className="w-1/4 min-w-fit">
+              <FormItemDisplay
+                title={"Status"}
+                value={activityStatus[status]}
+              />
             </div>
           </div>
-          <div className="">
-            <div className="div">
-              <p>Start Date:</p>
-              <p>{GetDate(startDate)}</p>
-            </div>
-            <div className="div">
-              <p>End Date:</p>
-              <p>{GetDate(endDate)}</p>
-            </div>
-            {actualEndDate && (
-              <div className="div">
-                <p>Actual Start Date:</p>
-                <p>{GetDate(actualStartDate)}</p>
+          <div className="datesWrapper flex justify-between mt-3 flex-wrap gap-4">
+            {editActivity && status == 1 ? (
+              <div className="w-full sm:w-2.5/5 flex  justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
+                <div className="w-2.5/5 min-w-fit">
+                  <InputField
+                    InputValue={startDate}
+                    InputTitle={"Start Date (mm-dd-yy)"}
+                    type="date"
+                    InputName={"startDate"}
+                    OnChange={handleChange}
+                  />
+                </div>
+                <div className="w-2.5/5 min-w-fit">
+                  <InputField
+                    InputValue={endDate}
+                    OnChange={handleChange}
+                    InputTitle={"End Date (mm-dd-yy)"}
+                    type="date"
+                    InputName={"endDate"}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="w-full sm:w-2.5/5 flex justify-between flex-wrap min-w-fit gap-4 sm:flex-nowrap">
+                <div className="w-2.5/5 min-w-fit">
+                  <FormItemDisplay
+                    title={"Start Date"}
+                    value={startDate ? GetDate(startDate) : "No date"}
+                    Style={"min-w-fit"}
+                  />
+                </div>
+                <div className="w-2.5/5 min-w-fit">
+                  <FormItemDisplay
+                    title={"End Date"}
+                    value={endDate ? GetDate(endDate) : "No date"}
+                  />
+                </div>
               </div>
             )}
-            {actualEndDate && (
-              <div className="div">
-                <p>Actual End Date:</p>
-                <p>{GetDate(actualEndDate)}</p>
+
+            {status != 1 && (
+              <>
+                {editActualDates && status == 2 ? (
+                  <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
+                    <div className=" w-2.5/5 min-w-fit">
+                      <InputField
+                        InputValue={actualStartDate}
+                        InputTitle={"Actual Start Date (mm-dd-yy)"}
+                        type="date"
+                        InputName={"actualStartDate"}
+                        OnChange={handleChange}
+                      />
+                    </div>
+                    <div className=" w-2.5/5 min-w-fit">
+                      <InputField
+                        InputValue={actualEndDate}
+                        OnChange={handleChange}
+                        InputTitle={"Actual End Date (mm-dd-yy)"}
+                        type="date"
+                        InputName={"actualEndDate"}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
+                    <div className=" w-2.5/5 min-w-fit">
+                      <FormItemDisplay
+                        title={"Acual Start Date"}
+                        value={
+                          actualStartDate ? GetDate(actualStartDate) : "No date"
+                        }
+                      />
+                    </div>
+                    <div className="w-2.5/5 min-w-fit">
+                      <FormItemDisplay
+                        title={"Acual End Date"}
+                        value={
+                          actualEndDate ? GetDate(actualEndDate) : "No date"
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          <div className="mt-3">
+            {editActivity ? (
+              <TextAreaField
+                InputValue={description}
+                InputTitle={"Description"}
+                InputName={"description"}
+                OnChange={handleChange}
+              />
+            ) : (
+              <FormItemDisplayBig title={"Description"} value={description} />
+            )}
+          </div>
+          <div className="w-1/4 min-w-fit mt-3">
+            {editActivity ? (
+              <SelectInputField
+                InputValue={projectPhase}
+                InputTitle={"Project Phase"}
+                InputName={"projectPhase"}
+                OnChange={handleChange}
+                selectOptions={[
+                  { value: 0, text: "Select an Option" },
+                  { value: 1, text: "Pre-Construction" },
+                  { value: 2, text: "Construction" },
+                  { value: 3, text: "Post-Construction" },
+                ]}
+              />
+            ) : (
+              <FormItemDisplay
+                title={"Project Phase:"}
+                value={constructionPhasesValue[projectPhase]}
+              />
+            )}
+          </div>
+          <div className="mt-3">
+            <p className="ml-3 text-xs font-inter ">File Attached</p>
+            <div
+              style={{ borderColor: "rgb(0,0,0,0.6)" }}
+              className={` ${
+                fileInputDisplay
+                  ? "!border-indigo-400 focus:!border-indigo-700 focus:!outline-none"
+                  : ""
+              }flex justify-between rounded-lg py-1 px-1 md:px-3 mt-1 w-full border-2 border-solid sm:py-2 max-h-24 text-xs md:text-sm lg:text-base `}
+            >
+              {fileInputDisplay ? (
+                <input type="file" onChange={handleFileChange} />
+              ) : (
+                <p>{fileName ? `${fileName}` : "No file"}</p>
+              )}
+              <div>
+                {fileName && (
+                  <div className="flex flex-wrap gap-1 max-w-fit justify-end sm:justify-normal">
+                    <DownloadBtn OnClick={handleActivityFileDownload} />
+                    {status === 1 && (
+                      <DeleteBtn
+                        OnClick={() => {
+                          setFileDelete(true);
+                          setDeleteModal(true);
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+                {!fileName && status === 1 && !fileInputDisplay && (
+                  <SmallDefaultBtn OnClick={() => setFileInputDisplay(true)}>
+                    Add File
+                  </SmallDefaultBtn>
+                )}
+                {!fileName &&
+                  status === 1 &&
+                  fileInputDisplay &&
+                  activityFile && (
+                    <SmallDefaultBtn OnClick={handleAddActivityFile}>
+                      Save File
+                    </SmallDefaultBtn>
+                  )}
               </div>
-            )}
-          </div>
-          <div className="">
-            <p>Description:</p> {/*make this scrollable if bigger */}
-            <p>{description}</p>
-          </div>
-          <div className="">
-            <div className="div">
-              <p>Project Phase:</p>
-              <p>{constructionPhasesValue[phase]}</p>
             </div>
-            {/* <div className="div">
-              <p>Assigned To:</p>
-              <p>{`${firstName} ${lastName}`}</p>
-            </div>
-            <div className="div">
-              <p>Profession:</p>
-              <p>{userProfession[profession]}</p>
-            </div> */}
           </div>
-          <div className="pm-row">
-            <p>File Attached: {fileName ? `${fileName}` : "No file"} </p>
-            {fileName && (
-              <button onClick={downloadActivityFile}> Download File</button>
-            )}
-          </div>
-          <div>
-            {/* {status === 1 && <button onClick={ApproveActivity}>Approve</button>}
-            {status === 1 && <button onClick={RejectActivity}>Reject</button>} */}
-            {/* {status === 1 && <button>Reject</button>} */}
+
+          <div className="flex gap-2 mt-3">
             {status === 1 && (
               <>
-                {/* <button>Edit</button> */}
                 {editActivity ? (
-                  <button> Submit</button>
+                  <GeneralBtn OnClick={handleActivityUpdate}>Submit</GeneralBtn>
                 ) : (
-                  <button>Edit</button>
+                  <GeneralBtn OnClick={() => setEditActivity(true)}>
+                    Edit
+                  </GeneralBtn>
                 )}
 
-                {fileName ? (
-                  <button>Remove File</button>
-                ) : (
-                  <button>Upload File</button>
-                )}
-
-                <button>Delete</button>
+                <GeneralBtn
+                  OnClick={() => {
+                    setDeleteModal(true);
+                  }}
+                >
+                  Delete
+                </GeneralBtn>
               </>
+            )}
+
+            {status === 3 && (
+              <GeneralBtn
+                OnClick={() => {
+                  setDeleteModal(true);
+                }}
+              >
+                Delete
+              </GeneralBtn>
             )}
 
             {status === 2 && (
               <>
-                {editDates ? (
-                  <button>Save Changes</button>
+                {editActualDates ? (
+                  <GeneralBtn OnClick={handleActualDatesUpdate}>
+                    Save Changes
+                  </GeneralBtn>
                 ) : (
-                  <button>edit actual dates</button>
+                  <GeneralBtn OnClick={() => setEditActualDates(true)}>
+                    Update actual dates
+                  </GeneralBtn>
                 )}
-
-                <button>Done</button>
+                <GeneralBtn OnClick={handleActivityToDone}>
+                  Set As Done
+                </GeneralBtn>
               </>
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </>
+    </AppModal>
   );
 };
-
-// export default PmActivity;
 
 export default OtherProActivity;

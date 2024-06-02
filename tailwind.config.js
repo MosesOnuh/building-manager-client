@@ -5,7 +5,26 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        inter: [" Inter", 'sans-serif'],
+      },
+       width: {
+        '10': '10%',
+        '30': '30%',
+        '35': '35%',
+        '5': '5%',
+        '2.5/5': '45%',
+        '70': '70%'
+      },
+    },
   },
+  
   plugins: [],
 }
+
+
+// fontFamily: {
+//         inter:[" 'Inter' ", 'sans-serif'],
+//         lato:[" 'Lato' ", 'sans-serif']
+//       }

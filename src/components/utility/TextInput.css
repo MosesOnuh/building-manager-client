@@ -1,0 +1,22 @@
+.input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-label {
+  padding: 0 4px;
+  position: absolute;
+  top: 55%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+  transition: top 0.3s, font-size 0.3s;
+}
+
+.placeholder-top {
+  top: 5px;
+  font-size: 0.8em;
+  background-color: #fff;
+  color: black;
+}

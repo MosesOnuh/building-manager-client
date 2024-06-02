@@ -1,13 +1,32 @@
- {
-   {
-    /* .table-green{
-    background: blue;
-} */
-  }
-}
-
 .pagination-bar {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.tableContainer {
+  overflow-x: scroll;
+}
+
+.SN {
+  width: 10%;
+}
+
+.projectName {
+  width: 50%;
+  min-width: 200px;
+}
+.projStartDate {
+  width: 20%;
+  min-width: 100px;
+}
+.projEndDate {
+  width: 20%;
+  min-width: 100px;
+}
+
+@media (max-width: 660px) {
+  .tableContainer {
+  font-size: 12px;
+  }
 }

@@ -1,7 +1,25 @@
-.Homepage-wrapper{
-height: 100vh;
-width: 100vw;
-display: grid;
-place-items: center;
-{{/* background-color: green; */}}
+.Homepage-wrapper {
+  height: 100vh;
+  width: 100vw;
+}
+
+.center-body {
+  height: calc(100vh - 64px);
+  width: 100vw;
+}
+
+.home-image {
+  background-image: url("../../assets/construction.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+@media (min-width: 493px) {
+  .modal-wrapper {
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.07);
+    padding-top: 70px;
+  }
 }

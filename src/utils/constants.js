@@ -1,19 +1,13 @@
 
 
 export const paginationPageSize = 8;
-export const accessToken = "tokenA";
-export const refreshToken = "tokenR";
-
-// export const constructionPhases = {
-//     PreConstruction: 1,
-//     Construction: 2,
-//     PostConstruction: 3,
-// }
+export const accessToken = "accessToken";
+export const refreshToken = "refreshToken";
 
 export const constructionPhasesValue = {
-    1 : "Pre Construction",
+    1 : "Pre-Construction",
     2 : "Construction",
-    3 : "Post Construction",
+    3 : "Post-Construction",
 }
 
 export const userProfession = {
@@ -39,6 +33,12 @@ export const activityStatus = {
     4 : 'Done'
 }
 
+export const activityStatusKey = {
+    Pending : 1,
+    Approved : 2,
+    Rejected : 3,
+    Done : 4
+}
 
 export function generateNewArray(items) {
       return items.map((item) => {
@@ -99,5 +99,16 @@ export function generateNewArray(items) {
         ];
       });
     }
+
+export  const AddSerialNumber = (itemList, currentPage, PageSize) => {
+  return itemList.map((item, index) =>{
+    let num = index++ + 1
+    let sN = (currentPage - 1) * PageSize + num++ ;
+    return {
+      serialNumber: sN,
+      ...item,
+    };
+  })
+}
 
  

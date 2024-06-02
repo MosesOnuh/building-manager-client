@@ -1,13 +1,19 @@
-import spinner from "../../assets/spinner.gif";
+import { ClipLoader } from "react-spinners";
 
-const Loader = () => (
-  <>
-    <img
-      src= {spinner}
-      style={{ width: "200px", margin: "auto", display: "block" }}
-      alt="Loading.."
+const override = {
+  display: "block",
+  margin: "100px auto",
+};
+
+const Loader = () => {
+  return (
+    <ClipLoader
+      color="#4338ca"
+      loading={true}
+      cssOverride={override}
+      // size={150}
     />
-  </>
-);
+  );
+};
 
 export default Loader;
