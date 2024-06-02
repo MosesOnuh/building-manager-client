@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { generateNewArray } from "../../utils/constants";
 import Loader from "../loading/Loading";
 import "./activityChart.css"
+import useMemberInfo from "../../hooks/useMemberInfo";
 
 const columns = [
   { type: "string", label: "Task ID" },
@@ -32,6 +33,9 @@ const  ActivityChart = () => {
     const [activities, setActivities] = useState(null);
     const [display, setDisplay] = useState(null)
 
+      // const { user, setUser: setMemberDetail } = useMemberInfo();
+      const { user } = useMemberInfo();
+
     const {
     loading,
     error,
@@ -39,7 +43,7 @@ const  ActivityChart = () => {
     get,
   } = useAPI();
 
-  const { projectId } = useParams();
+  let projectId = user?.projectId
 
   useEffect(() => {
     // let preConsUrl = `https://localhost:7129/api/Activity/user/Getactivities/?projectId=${projectId}`;
@@ -74,7 +78,6 @@ const  ActivityChart = () => {
       {error && (
         <div className="error-alert">
           <p>{error?.message}</p>
-          {/* <p>dfdffdfdfdd</p> */}
         </div>
       )}
       {loading && <Loader />}

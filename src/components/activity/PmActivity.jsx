@@ -1,28 +1,55 @@
 import React, { useEffect } from "react";
 import useAPI from "../../hooks/useAPI";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Loader from "../loading/Loading";
-import { paginationPageSize, userProfession } from "../../utils/constants";
+import {
+  AddSerialNumber,
+  activityStatus,
+  paginationPageSize,
+  userProfession,
+} from "../../utils/constants";
 import Pagination from "../pagination/Pagination";
 import { GetDate } from "../../utils/timeUtil";
 import "./OtherProActivity.css";
 import "./ClientActivity.css";
 import { constructionPhasesValue } from "../../utils/constants";
-import { activityStatus } from "../../utils/constants";
+import Pm_ClientTable from "../utility/table/Pm_ClientTable";
+import { format } from "date-fns";
+import AppModal from "../utility/Modals/Modal";
+import FormItemDisplay, {
+  FormItemDisplayBig,
+} from "../utility/FormItemDisplay";
+import { DownloadBtn } from "../utility/buttons/SmallBtns";
+import { toast } from "react-toastify";
+import GeneralBtn from "../utility/buttons/MainBtns";
+import NonFound from "../utility/NonFound";
+
 
 const PmActivity = ({ userInfo }) => {
-  // const [projectItems, setProjectItems] = useState([]);
   const [preConstCurrentPage, setPreConstCurrentPage] = useState(1);
   const [constCurrentPage, setConstCurrentPage] = useState(1);
   const [postConstCurrentPage, setPostConstCurrentPage] = useState(1);
-  // const [memberDetail, setMemberDetail] = useState(null);
 
   const [preConsPhaseData, setPreConsPhaseData] = useState(null);
   const [consPhaseData, setConsPhaseData] = useState(null);
   const [postConsPhaseData, setPostConsPhaseData] = useState(null);
-  const [viewForm, setViewForm] = useState(false);
+  const [viewDetail, setViewDetail] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [refreshPage, SetRefreshPage] = useState(false);
+
+  const onCloseDetail = (isRefresh) => {
+    setSelectedActivity(null);
+    setViewDetail(false);
+    if (isRefresh) {
+      SetRefreshPage(!refreshPage);
+    }
+  };
+
+  const displayActivity = (item) => {
+    setSelectedActivity(item);
+    setViewDetail(true);
+  };
 
   const {
     loading: preConsLoading,
@@ -53,14 +80,13 @@ const PmActivity = ({ userInfo }) => {
         const response = await preConsGet(preConsUrl);
         setPreConsPhaseData(response);
         preConsSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setPreConsPhaseData(null);
       }
     };
 
     fetchPreConsData();
-  }, [projectId, preConstCurrentPage, userInfo]);
+  }, [projectId, preConstCurrentPage, userInfo, refreshPage]);
 
   useEffect(() => {
     let consUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}`;
@@ -70,14 +96,13 @@ const PmActivity = ({ userInfo }) => {
         const response = await consGet(consUrl);
         setConsPhaseData(response);
         consSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setConsPhaseData(null);
       }
     };
 
     fetchConsData();
-  }, [projectId, constCurrentPage, userInfo]);
+  }, [projectId, constCurrentPage, userInfo, refreshPage]);
 
   useEffect(() => {
     let postConsUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}`;
@@ -87,503 +112,418 @@ const PmActivity = ({ userInfo }) => {
         const response = await postConsGet(postConsUrl);
         setPostConsPhaseData(response);
         postConsSetErrToNull();
-        // console.log(response);
       } catch (err) {
         setPostConsPhaseData(null);
       }
     };
 
     fetchPostConsData();
-  }, [projectId, postConstCurrentPage, userInfo]);
-
-  const displayActivity = (item) => {
-    setSelectedActivity(item);
-    setViewForm(true);
-  };
-
-  const closeForm = () => {
-    setViewForm(false);
-  };
-
-  const removeSelectedActivity = () => setSelectedActivity(null)
+  }, [projectId, postConstCurrentPage, userInfo, refreshPage]);
 
   return (
     <>
-      <div>Pm Activity</div>
-
       {preConsError && (
         <div className="error-alert">
           <p>{preConsError?.message}</p>
         </div>
       )}
       {(preConsLoading || consLoading) && <Loader />}
-      {/* <></> */}
       <>
-        <div>
-          <p>{userInfo?.projectName || ""}</p>
-          <p>{`${userInfo?.firstName || ""}  ${userInfo?.lastName || ""}`}</p>
-          <p>{userProfession[userInfo?.profession] || ""}</p>
-        </div>
         <div className="activity-tables">
           <div className="phase-wrapper">
-            <p> Pre Construction</p>
-            {preConsPhaseData && !preConsLoading && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Profession</th>
-                          <th>Person</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {!error && data?.data.map((item) => ( */}
-                        {preConsPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.activityName}</td>
-                            <td>{userProfession[item?.profession]}</td>
-                            <td>
-                              {`${item?.firstName || ""}  ${
-                                item?.lastName || ""
-                              }`}
-                            </td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={preConstCurrentPage}
-                      totalCount={preConsPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setPreConstCurrentPage(page)}
+            {preConsPhaseData?.data?.length > 0 &&
+              !preConsLoading &&
+              !preConsError && (
+                <>
+                  <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
+                    Pre-Construction Phase Activities
+                  </p>
+                  <div
+                    style={{ width: "98%" }}
+                    className="tableContainer mx-auto mb-3"
+                  >
+                    <Pm_ClientTable
+                      items={AddSerialNumber(
+                        preConsPhaseData?.data,
+                        preConstCurrentPage,
+                        paginationPageSize
+                      )}
+                      displayActivity={displayActivity}
                     />
-                  </>
-                </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+                  </div>
+                  <Pagination
+                    className="pagination-bar"
+                    currentPage={preConstCurrentPage}
+                    totalCount={preConsPhaseData?.pagination?.totalCount}
+                    pageSize={paginationPageSize}
+                    onPageChange={(page) => setPreConstCurrentPage(page)}
+                  />
+                </>
+              )}
+            {preConsPhaseData?.data?.length == 0 && !preConsLoading && (
+              <div className="sm:my-10">
+                <NonFound
+                  customMessage={"No Preconstruction Activity has been created"}
+                />
+              </div>
+            )}
+            {preConsError && !preConsLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Pre-Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
-          <div className="phase-wrapper">
-            <p>Construction phase</p>
-            {consPhaseData && !consLoading && !consError && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Profession</th>
-                          <th>Person</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* {!error && data?.data.map((item) => ( */}
-                        {consPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.activityName}</td>
-                            <td>{userProfession[item?.profession]}</td>
-                            <td>
-                              {`${item?.firstName || ""}  ${
-                                item?.lastName || ""
-                              }`}
-                            </td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={constCurrentPage}
-                      totalCount={consPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setConstCurrentPage(page)}
-                    />
-                  </>
+          <div className="phase-wrapper mt-10">
+            {consPhaseData?.data?.length > 0 && !consLoading && !consError && (
+              <>
+                <p className="font-bold text-xs md:text-sm lg:text-base my-3">
+                  Construction Phase Activities
+                </p>
+                <div
+                  style={{ width: "98%" }}
+                  className="tableContainer mx-auto mb-3"
+                >
+                  <Pm_ClientTable
+                    // items={consPhaseData?.data}
+                    items={AddSerialNumber(
+                      consPhaseData?.data,
+                      preConstCurrentPage,
+                      paginationPageSize
+                    )}
+                    displayActivity={displayActivity}
+                  />
                 </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+                <Pagination
+                  className="pagination-bar"
+                  currentPage={constCurrentPage}
+                  totalCount={consPhaseData?.pagination?.totalCount}
+                  pageSize={paginationPageSize}
+                  onPageChange={(page) => setConstCurrentPage(page)}
+                />
+              </>
+            )}
+            {consPhaseData?.data?.length == 0 && !consLoading && !consError && (
+              <div className="sm:my-10">
+                <NonFound
+                  customMessage={"No Construction Activity has been created"}
+                />
+              </div>
+            )}
+            {consError && !consLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
-          <div className="phase-wrapper">
-            <p>Post Construction phase</p>
-            {postConsPhaseData && !postConsLoading && !postConsError && (
-              <div className="Other-Pro-tables">
-                <div className="Otherpro-PreConstruction-table">
-                  <>
-                    <table className="table-green">
-                      <thead>
-                        <tr>
-                          {/* <th>S/N</th> */}
-                          <th>Name</th>
-                          <th>Profession</th>
-                          <th>Person</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actual Start Date</th>
-                          <th>Actual End Date</th>
-                          <th>Status</th>
-                          <th>action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {postConsPhaseData?.data?.map((item) => (
-                          <tr
-                            key={item.id}
-                            // onClick={() => NavigateToActivity(item.id)}
-                          >
-                            <td>{item.activityName}</td>
-                            <td>{userProfession[item?.profession]}</td>
-                            <td>
-                              {`${item?.firstName || ""}  ${
-                                item?.lastName || ""
-                              }`}
-                            </td>
-                            <td>{GetDate(item.startDate)}</td>
-                            <td>{GetDate(item.endDate)}</td>
-                            <td>
-                              {item.actualStartDate
-                                ? GetDate(item.actualStartDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {item.actualEndDate
-                                ? GetDate(item.actualEndDate)
-                                : "No date"}
-                            </td>
-                            <td>
-                              {/* {item.status === 1
-                                ? "Pending"
-                                : item.status === 2
-                                ? "Approved"
-                                  ? item.status === 3
-                                  : "Rejected"
-                                : "Done"} */}
-                              {activityStatus[item?.status]}
-                            </td>
-                            <td onClick={() => displayActivity(item)}>
-                              View Activity
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <Pagination
-                      className="pagination-bar"
-                      currentPage={postConstCurrentPage}
-                      totalCount={postConsPhaseData?.pagination?.totalCount}
-                      // totalCount={10}
-                      pageSize={paginationPageSize}
-                      onPageChange={(page) => setPostConstCurrentPage(page)}
+          <div className="phase-wrapper mt-10">
+            {postConsPhaseData?.data?.length > 0 &&
+              !postConsLoading &&
+              !postConsError && (
+                <>
+                  <p className="font-bold text-xs md:text-sm lg:text-base my-3">
+                    Post-Construction Phase Activities
+                  </p>
+                  <div
+                    style={{ width: "98%" }}
+                    className="tableContainer mx-auto mb-3"
+                  >
+                    <Pm_ClientTable
+                      // items={postConsPhaseData?.data}
+                      items={AddSerialNumber(
+                        postConsPhaseData?.data,
+                        postConstCurrentPage,
+                        paginationPageSize
+                      )}
+                      displayActivity={displayActivity}
                     />
-                  </>
+                  </div>
+                  <Pagination
+                    className="pagination-bar"
+                    currentPage={postConstCurrentPage}
+                    totalCount={postConsPhaseData?.pagination?.totalCount}
+                    pageSize={paginationPageSize}
+                    onPageChange={(page) => setPostConstCurrentPage(page)}
+                  />
+                </>
+              )}
+            {postConsPhaseData?.data?.length == 0 &&
+              !postConsLoading &&
+              !postConsError && (
+                <div className="sm:my-10">
+                  <NonFound
+                    customMessage={
+                      "No Post-Construction Activity has been created"
+                    }
+                  />
                 </div>
-                <div className="Otherpro-Construction-table"></div>
-                <div className="Otherpro-PostConstruction-table"></div>
+              )}
+            {postConsError && !postConsLoading && (
+              <div className="sm:my-10">
+                <GetErrorNotification
+                  message={"Post-Construction Phase Activities"}
+                />
               </div>
             )}
           </div>
         </div>
-
-        {/* <p>{memberLoading}</p> */}
       </>
-
-      {viewForm && (
+      {viewDetail && (
         <Modal
-          onClose={closeForm}
+          onCloseModal={onCloseDetail}
           selectedActivity={selectedActivity}
-          removeSelectedActivity={removeSelectedActivity}
         />
       )}
     </>
   );
 };
 
-const Modal = ({ onClose, selectedActivity, removeSelectedActivity }) => {
-  const [approvalSuccess, setApprovalSuccess] = useState(null);
-  const [rejectionSuccess, setRejectionSuccess] = useState(null);
+const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
+  const [formData, setFormData] = useState({
+    ...selectedActivity,
+    startDate: format(new Date(selectedActivity.startDate), "yyyy-MM-dd"),
+    endDate: format(new Date(selectedActivity.endDate), "yyyy-MM-dd"),
+    actualStartDate:
+      selectedActivity.actualStartDate &&
+      format(new Date(selectedActivity.actualStartDate), "yyyy-MM-dd"),
+    actualEndDate:
+      selectedActivity.actualEndDate &&
+      format(new Date(selectedActivity.actualEndDate), "yyyy-MM-dd"),
+  });
+
+  const [activityChange, setActivityChange] = useState(false);
+
+  const handleModalClose = () => {
+    if (activityChange) {
+      onCloseModal(true);
+    } else {
+      onCloseModal(false);
+    }
+  };
 
   const {
     projectId,
     activityId,
     activityName,
+    firstName,
+    lastName,
+    profession,
     status,
     startDate,
     endDate,
     actualStartDate,
     actualEndDate,
     description,
-    phase,
-    firstName,
-    lastName,
-    profession,
+    projectPhase,
     fileName,
-  } = selectedActivity;
+  } = formData;
 
   const {
-    loading: downloadLoading,
     error: downloadError,
     setErrToNull: downloadSetErrToNull,
     downloadFile: downloadGet,
   } = useAPI();
 
   const {
-    loading: approvalLoading,
-    error: approvalError,
-    setErrToNull: approvalSetErrToNull,
-    patch: approvalPatch,
+    error: activityApprovalError,
+    setErrToNull: activityApprovalSetErrToNull,
+    patch: activityApprovalReq,
   } = useAPI();
 
-  const {
-    loading: rejectionLoading,
-    error: rejectionError,
-    setErrToNull: rejectionSetErrToNull,
-    patch: rejectionPatch,
-  } = useAPI();
-
-  const ApproveActivity = () => {
-    approvalSetErrToNull();
-    const reqData = {
-      activityId: activityId,
-      projectId: projectId,
-      statusAction: 2,
+  const handleActivityApproval = async (action) => {
+    activityApprovalSetErrToNull();
+    const reqbody = {
+      activityId,
+      projectId,
+      statusAction: action,
     };
 
-    const response = approvalPatch(
-      "https://localhost:7129/api/Activity/PM/ActivityApproval",
-      reqData
-    );
+    try {
+      toastId.current = toast.loading("Loading...");
+      await activityApprovalReq(`/Activity/Pm/ActivityApproval`, reqbody);
 
-    setApprovalSuccess(response);
-    setTimeout(() => {
-      setApprovalSuccess(null);
-      removeSelectedActivity(null);
-      onClose();
-    }, 2000);
+      //comeback and remove hardcoded value
+      setFormData({ ...formData, status: action });
+      setActivityChange(true);
+      toast.update(toastId.current, {
+        render: `Activity ${
+          action === 2 ? "Approved" : "Rejected"
+        } Successfully`,
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: activityApprovalError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
   };
 
-  const RejectActivity = () => {
-    rejectionSetErrToNull();
-    const reqData = {
-      activityId: activityId,
-      projectId: projectId,
-      statusAction: 3,
-    };
-
-    const response = rejectionPatch(
-      "https://localhost:7129/api/Activity/PM/ActivityApproval",
-      reqData
-    );
-
-    setRejectionSuccess(response);
-    setTimeout(() => {
-      setRejectionSuccess(null);
-      removeSelectedActivity(null);
-      onClose();
-    }, 2000);
-  };
-
-  useEffect(() => {
-    if (downloadError)
-      var timeInterval = setInterval(() => {
-        downloadSetErrToNull();
-      }, 2000);
-
-    return () => clearInterval(timeInterval);
-  }, [downloadError]);
-
-  const downloadActivityFile = () => {
+  const toastId = useRef(null);
+  const downloadActivityFile = async () => {
     downloadSetErrToNull();
-    downloadGet(
-      `/Activity/PM/DownloadActivityFile?projectId=${projectId}&ActivityId=${activityId}&FileName=${fileName}`,
-      fileName
-    );
+    try {
+      toastId.current = toast.loading("Downloading...");
+      await downloadGet(
+        `/Activity/pm/DownloadActivityFile?projectId=${projectId}&ActivityId=${activityId}&FileName=${fileName}`,
+        fileName
+      );
+      toast.update(toastId.current, {
+        render: "Download Successful",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: downloadError?.message || "Error Downloading File",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
   };
 
   return (
-    <div className="activity-modal-overlay">
-      {/* <div className="activity-modal-container" onClick={(e) => e.stopPropagation()}> */}
-      <div className="activity-display-modal-container ">
-        {rejectionSuccess && !rejectionLoading && (
-          <p>Project Successfully Rejected</p>
-        )}
-        {rejectionError && !rejectionLoading && (
-          <div className="error-alert">
-            <p>{rejectionError?.message}</p>
-          </div>
-        )}
+    <AppModal onCloseModal={handleModalClose}>
+      <>
+        {/* {deleteModal && (
+          <CausionModal
+            message={`Are you sure you want to delete the file ${fileName}`}
+            onCloseModal={() => setDeleteModal(false)}
+            handleAction={deleteActivityFile}
+          />
+        )} */}
+        <div className=" flex justify-between items-center flex-wrap  gap-4">
+          <h2 className="font-semibold text-2xl">Activity</h2>
 
-        {approvalSuccess && !approvalLoading && (
-          <p>Project Successfully Approved</p>
-        )}
-        {approvalError && !approvalLoading && (
-          <div className="error-alert">
-            <p>{approvalError?.message}</p>
-          </div>
-        )}
-        {downloadError && !downloadLoading && (
-          <div className="error-alert">
-            <p>{downloadError?.message}</p>
-          </div>
-        )}
-
-        <div className="activity-modal-header">
-          <h2>Activity</h2>
-
-          {/* <span>Activity ID: {activityId}</span> */}
-          <button onClick={onClose}>Close</button>
+          <p className="text-xs md:text-sm lg:text-base">ID: {activityId}</p>
         </div>
         <div className="pm-modal-body">
-          <div className="">
-            <div className="div">
-              <p>Name:</p>
-              <p>{activityName}</p>
+          <div className="flex justify-between mt-5 flex-wrap gap-3">
+            <div className="w-full lg:w-70">
+              <FormItemDisplay title={"Name"} value={activityName} />
             </div>
-            <div className="div">
-              <p>Status:</p>
-              <p>
-                {/* {status === 1
-                  ? "Pending"
-                  : status === 2
-                  ? "Approved"
-                    ? status === 3
-                    : "Rejected"
-                  : "Done"} */}
-                {activityStatus[status]}
-              </p>
+            <div className="w-1/4 min-w-fit">
+              <FormItemDisplay
+                title={"Status"}
+                value={activityStatus[status]}
+              />
             </div>
           </div>
-          <div className="">
-            <div className="div">
-              <p>Start Date:</p>
-              <p>{GetDate(startDate)}</p>
-            </div>
-            <div className="div">
-              <p>End Date:</p>
-              <p>{GetDate(endDate)}</p>
-            </div>
-            {actualEndDate && (
-              <div className="div">
-                <p>Actual Start Date:</p>
-                <p>{GetDate(actualStartDate)}</p>
+          <div className="datesWrapper flex justify-between mt-3 flex-wrap gap-3">
+            <div className="w-full sm:w-2.5/5 flex justify-between flex-wrap min-w-fit gap-3 sm:flex-nowrap">
+              <div className="w-2.5/5 min-w-fit">
+                <FormItemDisplay
+                  title={"Start Date"}
+                  value={startDate ? GetDate(startDate) : "No date"}
+                  Style={"min-w-fit"}
+                />
               </div>
-            )}
-            {actualEndDate && (
-              <div className="div">
-                <p>Actual End Date:</p>
-                <p>{GetDate(actualEndDate)}</p>
+              <div className="w-2.5/5 min-w-fit">
+                <FormItemDisplay
+                  title={"End Date"}
+                  value={endDate ? GetDate(endDate) : "No date"}
+                />
               </div>
+            </div>
+
+            {status != 1 && (
+              <>
+                <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-3 sm:flex-nowrap">
+                  <div className=" w-2.5/5 min-w-fit">
+                    <FormItemDisplay
+                      title={"Acual Start Date"}
+                      value={
+                        actualStartDate ? GetDate(actualStartDate) : "No date"
+                      }
+                    />
+                  </div>
+                  <div className="w-2.5/5 min-w-fit">
+                    <FormItemDisplay
+                      title={"Acual End Date"}
+                      value={actualEndDate ? GetDate(actualEndDate) : "No date"}
+                    />
+                  </div>
+                </div>
+              </>
             )}
           </div>
-          <div className="">
-            <p>Description:</p> {/*make this scrollable if bigger */}
-            <p>{description}</p>
+          <div className="mt-3">
+            <FormItemDisplayBig title={"Description"} value={description} />
           </div>
-          <div className="">
-            <div className="div">
-              <p>Project Phase:</p>
-              <p>{constructionPhasesValue[phase]}</p>
+          <div className="mt-3 w-full  flex sm:justify-between flex-wrap gap-3">
+            <div className="w-30 min-w-fit">
+              <FormItemDisplay
+                title={"Project Phase:"}
+                value={constructionPhasesValue[projectPhase]}
+              />
             </div>
-            <div className="div">
-              <p>Assigned To:</p>
-              <p>{`${firstName} ${lastName}`}</p>
+            <div className="w-30 min-w-fit">
+              <FormItemDisplay
+                title={"Assigned To:"}
+                value={`${firstName} ${lastName}`}
+              />
             </div>
-            <div className="div">
-              <p>Profession:</p>
-              <p>{userProfession[profession]}</p>
+            <div className="w-30 min-w-fit">
+              <FormItemDisplay
+                title={"Profession"}
+                value={userProfession[profession]}
+              />
             </div>
           </div>
-          <div className="pm-row">
-            <p>File Attached: {fileName ? `${fileName}` : "No file"} </p>
-            {fileName && (
-              <button onClick={downloadActivityFile}> Download File</button>
+          <div className="mt-3">
+            <p className="ml-3 text-xs font-inter ">File Attached</p>
+            <div
+              style={{ borderColor: "rgb(0,0,0,0.6)" }}
+              className="flex justify-between rounded-lg py-1 px-1 md:px-3 mt-1 w-full border-2 border-solid sm:py-2 max-h-24 text-xs md:text-sm lg:text-base "
+            >
+              <p>{fileName ? `${fileName}` : "No file"}</p>
+
+              <div>
+                {fileName && (
+                  <div className="flex max-w-fit justify-end sm:justify-normal">
+                    <DownloadBtn OnClick={downloadActivityFile} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            {status === 1 && (
+              <>
+                <GeneralBtn OnClick={() => handleActivityApproval(2)}>
+                  Approve
+                </GeneralBtn>
+
+                <GeneralBtn OnClick={() => handleActivityApproval(3)}>
+                  Reject
+                </GeneralBtn>
+              </>
             )}
-          </div>
-          <div>
-            {status === 1 && <button onClick={ApproveActivity}>Approve</button>}
-            {status === 1 && <button onClick={RejectActivity}>Reject</button>}
           </div>
         </div>
-      </div>
-    </div>
+      </>
+    </AppModal>
   );
 };
 

@@ -1,5 +1,4 @@
 import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
-// import { accessToken } from "../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import {
   ChakraProvider,
@@ -33,7 +32,6 @@ export const ProtectedRoute = () => {
   const [load, setLoading] = useState(true);
 
   useEffect(() => {
-    // setLoading(true)
     if (!auth?.accessToken && sessionStorage.getItem(accessToken)) {
       setAuth({
         accessToken: sessionStorage.getItem(accessToken),
@@ -45,16 +43,6 @@ export const ProtectedRoute = () => {
 
   return (
     <>
-      {/* {loading && <Loader />} */}
-      {/* {auth?.accessToken ? (
-        <>
-          <SideBar />
-          <Outlet />
-        </>
-      ) : (
-        <Navigate to="/login" state={{ from: location }} replace />
-      )} */}
-
       {auth?.accessToken && (
         <>
           <SideBar />
@@ -74,7 +62,7 @@ function SideBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const { error, setErrToNull, post } = useAPI();
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
 
   const navigate = useNavigate();
 
@@ -113,11 +101,8 @@ function SideBar() {
 
   return (
     <ChakraProvider>
-      {/* <Box w="40%" mx="auto"> */}
       <Box pl="4">
-        {/* <Button ref={btnRef} colorScheme="teal" onClick={onOpen}> */}
         <Button ref={btnRef} onClick={onOpen}>
-          {/* <FaHamburger /> */}
           <FaBars />
         </Button>
         <Drawer
@@ -129,12 +114,11 @@ function SideBar() {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            {/* <DrawerHeader>Create your account</DrawerHeader> */}
-
             <DrawerBody>
               {/* <button onClick={navigateToProjectsPage}>Projects</button>
                 <button>log Out</button> */}
               <p onClick={navigateToProjectsPage}>Projects</p>
+              <p>Invites</p>
               <p onClick={logOut}>Log Out</p>
               {/* <p>Some contents...</p> */}
             </DrawerBody>
@@ -143,7 +127,6 @@ function SideBar() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              {/* <Button colorScheme="blue">Save</Button> */}
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
@@ -151,50 +134,3 @@ function SideBar() {
     </ChakraProvider>
   );
 }
-
-// function SideBar() {
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-//   const btnRef = useRef();
-
-//   return (
-//     <ChakraProvider>
-//       <Text
-//         color="#2F8D46"
-//         fontSize="2rem"
-//         textAlign="center"
-//         fontWeight="400"
-//         my="1rem"
-//       >
-//         GeeksforGeeks - React JS Chakra UI concepts
-//       </Text>
-//       <Box w="40%" mx="auto">
-//         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-//           Open
-//         </Button>
-//         <Drawer
-//           isOpen={isOpen}
-//           placement="right"
-//           onClose={onClose}
-//           finalFocusRef={btnRef}
-//         >
-//           <DrawerOverlay />
-//           <DrawerContent>
-//             <DrawerCloseButton />
-//             <DrawerHeader>Create your account</DrawerHeader>
-
-//             <DrawerBody>
-//               <Input placeholder="Type here..." />
-//             </DrawerBody>
-
-//             <DrawerFooter>
-//               <Button variant="outline" mr={3} onClick={onClose}>
-//                 Cancel
-//               </Button>
-//               <Button colorScheme="blue">Save</Button>
-//             </DrawerFooter>
-//           </DrawerContent>
-//         </Drawer>
-//       </Box>
-//     </ChakraProvider>
-//   );
-// }

@@ -10,8 +10,27 @@ import PmActivity from "./PmActivity";
 import "./ProjectActivity.css"
 import { userProfession } from "../../utils/constants";
 import GetErrorNotification from "../utility/GetErrorNotification";
+import useMemberInfo from "../../hooks/useMemberInfo";
 
 const ProjectActivity = () => {
+  const { user: memberDetail } = useMemberInfo();
+
+  return (
+    <>
+        {memberDetail &&
+          memberDetail.role === 1 && <PmActivity userInfo={memberDetail} />}
+        {memberDetail &&
+          memberDetail.role === 2 && (
+            <OtherProActivity userInfo={memberDetail} />
+          )}
+        { memberDetail &&
+          memberDetail.role === 3 && <ClientActivity userInfo={memberDetail} />}
+    </>
+  );
+};
+
+
+const ProjectActivityOld = () => {
   const [memberDetail, setMemberDetail] = useState(null);
   const {
     loading: memberLoading,
@@ -19,7 +38,6 @@ const ProjectActivity = () => {
     setErrToNull: memberSetErrToNull,
     get: memberGet,
   } = useAPI();
-
 
   const { projectId } = useParams();
 
@@ -73,16 +91,9 @@ const ProjectActivity = () => {
           </div>
         )}
         {memberError && !memberLoading && (
-          // <GetErrorNotification message={"project information"} />
           <GetErrorNotification customMessage={memberError?.message} />
         )}
-        {/* <div className="center">Project Activities</div> */}
         {memberLoading && <Loader />}
-        {/* {memberError && (
-          <div className="error-alert">
-            <p>{memberError?.message}</p>
-          </div>
-        )} */}
         {!memberLoading &&
           memberDetail &&
           !memberError &&
@@ -99,13 +110,13 @@ const ProjectActivity = () => {
           memberDetail.role === 3 && <ClientActivity userInfo={memberDetail} />}
       </div>
     </>
-  );     
+  );
 };
-
-export const ProjectNavigationBtn = ({ children, bgColor }) => {
+export const ProjectNavigationBtn = ({ children, OnClick, bgColor }) => {
   return (
     <>
       <button
+      onClick={OnClick}
         className={` ${
           bgColor ? "bg-black text-white" : "bg-gray-200"
         } w-fit border-gray-200 text-black h-fit py-1 px-3 sm:px-4 rounded-lg hover:bg-blue-200 shadow-l text-xs md:text-sm lg:text-base`}

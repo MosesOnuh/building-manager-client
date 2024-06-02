@@ -1,6 +1,5 @@
 import useAPI from "../../hooks/useAPI";
 import { useEffect, useRef, useState } from "react";
-// import "./Login.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { accessToken, refreshToken } from "../../utils/constants";
 import useAuth from "../../hooks/useAuth";
@@ -19,7 +18,6 @@ const Login = () => {
 
   const { loading, error, setErrToNull, login } = useAPI();
 
-  // const navigateToProjectsPage = () => {navigate('/projects')}
   const navigateToProjectsPage = () => {
     navigate(from, { replace: true });
   };

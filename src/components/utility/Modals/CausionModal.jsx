@@ -11,7 +11,7 @@ function CausionModal({ message, onCloseModal, handleAction }) {
       <div className="flex flex-col w-fit items-center row-gap-2 bg-white p-5 rounded-lg mx-auto my-4">
         <FaExclamationTriangle className="text-red-900" />
 
-        <p className="text-center md:pt-2 text-xs md:text-sm lg:text-base">
+        <p className="text-center md:pt-2 text-xs md:text-sm lg:text-base my-2 sm:my-4">
           {message}
         </p>
         <div className="flex gap-4">

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import "./Login.css";
 import { accessToken, refreshToken } from "../../utils/constants";
 import { TextInput } from "../utility/InputFields";
-import SubmitButton1 from "../utility/SubmitButton1";
+import SubmitBtn from "../utility/buttons/SubmitBtn";
 import { toast } from "react-toastify";
 
 const Signup = () => {
@@ -59,7 +59,7 @@ const Signup = () => {
     e.preventDefault();
     setErrToNull();
     setFormError(null);
-    console.log(formData)
+    console.log(formData);
     var check = await validatePassword();
     if (!check) return;
     try {
@@ -153,7 +153,7 @@ const Signup = () => {
               type={"password"}
             />
             <div className="flex justify-end mt-5">
-              <SubmitButton1 loading={loading} />
+              <SubmitBtn loading={loading} />
             </div>
 
             {/* <input

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./TextInput.css";
+import Select from "react-select";
 
 export const InputField = ({
   type,
@@ -23,7 +24,7 @@ export const InputField = ({
         name={InputName || InputTitle}
         value={InputValue}
         onChange={OnChange}
-        required
+        // required
         id={InputName}
         disabled={loading}
       />
@@ -35,8 +36,8 @@ export const TextAreaField = ({
   type,
   InputTitle,
   InputName,
-  PlaceHolder,
   InputValue,
+  // PlaceHolder,
   // value,
   OnChange,
   loading,
@@ -53,7 +54,8 @@ export const TextAreaField = ({
         name={InputName || InputTitle}
         value={InputValue}
         onChange={OnChange}
-        required
+        disabled={loading}
+        // required
         rows={3}
       />
     </>
@@ -68,7 +70,7 @@ export const SelectInputField = ({
   InputValue,
   OnChange,
   loading,
-  selectOptions
+  selectOptions,
 }) => {
   return (
     <>
@@ -86,6 +88,7 @@ export const SelectInputField = ({
         name={InputName || InputTitle}
         value={InputValue}
         onChange={OnChange}
+        disabled={loading}
         // required
       >
         {selectOptions?.map((item) => {
@@ -96,6 +99,63 @@ export const SelectInputField = ({
   );
 };
 
+export const DefaultSelect = ({
+  InputTitle,
+  InputName,
+  InputValue,
+  OnChange,
+  selectOptions,
+}) => {
+  return (<>
+    <label
+      htmlFor={InputName}
+      style={{ minWidth: "fit-content" }}
+      className="block ml-3 mb-1 text-xs font-inter "
+    >
+      {InputTitle}
+    </label>
+    <Select
+      value={InputValue}
+      onChange={OnChange}
+      options={selectOptions}
+      // placeholder="Select Country"
+      // isSearchable
+    />
+  </>);
+  
+};
+
+export const SearchSelect = ({
+  InputTitle,
+  InputName,
+  InputValue,
+  OnChange,
+  selectOptions,
+  customStyles,
+  Searchable,
+}) => {
+  return (
+    <>
+      <label
+        htmlFor={InputName}
+        style={{ minWidth: "fit-content" }}
+        className="block ml-3 mb-1 text-xs font-inter "
+      >
+        {InputTitle}
+      </label>
+
+      <Select
+        value={InputValue}
+        onChange={OnChange}
+        options={selectOptions}
+        styles={customStyles}
+        // placeholder="Select Country"
+        isSearchable={Searchable}
+      />
+    </>
+  );
+};
+// const SearchSelect = ({ InputTitle, InputName, InputValue }) => {};
 
 export const TextInput = ({
   type,
