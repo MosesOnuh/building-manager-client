@@ -13,18 +13,23 @@ import {
   constructionPhasesValue,
   AddSerialNumber,
   activityStatusKey,
+  constructionPhases,
 } from "../../utils/constants";
 import OtherProTable from "../utility/table/OtherProTable";
 import NonFound from "../utility/NonFound";
 import GetErrorNotification from "../utility/GetErrorNotification";
-import { FaRemoveFormat } from "react-icons/fa";
+// import { FaRemoveFormat } from "react-icons/fa";
 import {
   // TextInput,
   InputField,
   TextAreaField,
   SelectInputField,
+  SearchSelect,
 } from "../utility/InputFields";
-import GeneralBtn from "../utility/buttons/MainBtns";
+import GeneralBtn, {
+  ClearBtn,
+  SubmitGeneralBtn,
+} from "../utility/buttons/MainBtns";
 import FormItemDisplay, {
   FormItemDisplayBig,
 } from "../utility/FormItemDisplay";
@@ -51,6 +56,29 @@ const OtherProActivity = ({ userInfo }) => {
   const [viewDetail, setViewDetail] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [refreshPage, SetRefreshPage] = useState(false);
+  const [formData, setFormData] = useState({
+    requiredDate: "",
+    requiredStatus: "",
+  });
+  const [isSearch, setIsSearch] = useState(false);
+  const [displaySearch, setDisplaySearch] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value };
+    });
+  };
+
+  const handleSearch = (e) => {
+    setIsSearch(!isSearch);
+    setDisplaySearch(true);
+  };
+
+  const handleSearchClear = () => {
+    setFormData({ requiredDate: "", requiredStatus: "" });
+    setDisplaySearch(false);
+    setIsSearch(!isSearch);
+  };
 
   const onCloseDetail = (isRefresh) => {
     setSelectedActivity(null);
@@ -65,8 +93,11 @@ const OtherProActivity = ({ userInfo }) => {
     setViewDetail(true);
   };
 
-  const closeForm = () => {
+  const closeForm = (isRefresh) => {
     setViewForm(false);
+    if (isRefresh) {
+      SetRefreshPage(!refreshPage);
+    }
   };
 
   const {
@@ -91,7 +122,7 @@ const OtherProActivity = ({ userInfo }) => {
   const { projectId } = useParams();
 
   useEffect(() => {
-    let preConsUrl = `https://localhost:7129/api/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=1&pageNumber=${preConstCurrentPage}&pageSize=${paginationPageSize}`;
+    let preConsUrl = `/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=1&pageNumber=${preConstCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchPreConsData = async () => {
       try {
@@ -104,10 +135,10 @@ const OtherProActivity = ({ userInfo }) => {
     };
 
     fetchPreConsData();
-  }, [projectId, preConstCurrentPage, userInfo, refreshPage]);
+  }, [projectId, preConstCurrentPage, userInfo, refreshPage, isSearch]);
 
   useEffect(() => {
-    let consUrl = `https://localhost:7129/api/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}`;
+    let consUrl = `/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchConsData = async () => {
       try {
@@ -120,10 +151,10 @@ const OtherProActivity = ({ userInfo }) => {
     };
 
     fetchConsData();
-  }, [projectId, constCurrentPage, userInfo, refreshPage]);
+  }, [projectId, constCurrentPage, userInfo, refreshPage, isSearch]);
 
   useEffect(() => {
-    let postConsUrl = `https://localhost:7129/api/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}`;
+    let postConsUrl = `/Activity/OtherPro/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchPostConsData = async () => {
       try {
@@ -136,7 +167,7 @@ const OtherProActivity = ({ userInfo }) => {
     };
 
     fetchPostConsData();
-  }, [projectId, postConstCurrentPage, userInfo, refreshPage]);
+  }, [projectId, postConstCurrentPage, userInfo, refreshPage, isSearch]);
 
   return (
     <>
@@ -148,9 +179,44 @@ const OtherProActivity = ({ userInfo }) => {
       >
         Create Activity
       </button>
-      {(preConsLoading || consLoading) && <Loader />}
+
       <>
         <div className="activity-tables">
+          <div className="mt-3 mb-8 flex  min-w-fit flex-wrap gap-1  sm:gap-4">
+            <div className="w-1/5 min-w-fit">
+              <SelectInputField
+                InputValue={formData.requiredStatus}
+                InputTitle={"Status"}
+                InputName={"requiredStatus"}
+                OnChange={handleChange}
+                selectOptions={[
+                  { value: "", text: "All" },
+                  { value: "1", text: "Pending" },
+                  { value: "2", text: "Awaiting Approval" },
+                  { value: "3", text: "Approved" },
+                  { value: "4", text: "Rejected" },
+                  { value: "5", text: "Done" },
+                ]}
+              />
+            </div>
+            <div className=" min-w-fit">
+              <InputField
+                InputValue={formData.requiredDate}
+                InputTitle={"Required Date (mm-dd-yy)"}
+                type="date"
+                InputName={"requiredDate"}
+                OnChange={handleChange}
+              />
+            </div>
+
+            <div className="pt-5">
+              <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
+            </div>
+            <div className="pt-5">
+              <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+            </div>
+          </div>
+          {(preConsLoading || consLoading || postConsLoading) && <Loader />}
           <div className="phase-wrapper">
             {preConsPhaseData?.data?.length > 0 &&
               !preConsLoading &&
@@ -158,6 +224,8 @@ const OtherProActivity = ({ userInfo }) => {
                 <>
                   <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
                     Pre-Construction Phase Activities
+                    {displaySearch &&
+                      ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                   </p>
                   <div
                     style={{ width: "98%" }}
@@ -185,7 +253,9 @@ const OtherProActivity = ({ userInfo }) => {
               <div className="sm:my-10">
                 <NonFound
                   customMessage={
-                    "User has not created any Preconstruction Activity"
+                    displaySearch
+                      ? "No Preconstruction Activity based on search criteria"
+                      : "User has not created any Preconstruction Activity"
                   }
                 />
               </div>
@@ -193,6 +263,7 @@ const OtherProActivity = ({ userInfo }) => {
             {preConsError && !preConsLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={preConsError?.message}
                   message={"Pre-Construction Phase Activities"}
                 />
               </div>
@@ -203,6 +274,8 @@ const OtherProActivity = ({ userInfo }) => {
               <>
                 <p className="font-bold text-xs md:text-sm lg:text-base my-3">
                   Construction Phase Activities
+                  {displaySearch &&
+                    ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                 </p>
                 <div
                   style={{ width: "98%" }}
@@ -230,7 +303,9 @@ const OtherProActivity = ({ userInfo }) => {
               <div className="sm:my-10">
                 <NonFound
                   customMessage={
-                    "User has not created any Construction Activity"
+                    displaySearch
+                      ? "No Construction Activity based on search criteria"
+                      : "User has not created any Construction Activity"
                   }
                 />
               </div>
@@ -238,6 +313,7 @@ const OtherProActivity = ({ userInfo }) => {
             {consError && !consLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={consError?.message}
                   message={"Construction Phase Activities"}
                 />
               </div>
@@ -250,6 +326,8 @@ const OtherProActivity = ({ userInfo }) => {
                 <>
                   <p className="font-bold text-xs md:text-sm lg:text-base my-3">
                     Post-Construction Phase Activities
+                    {displaySearch &&
+                      ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                   </p>
                   <div
                     style={{ width: "98%" }}
@@ -279,7 +357,9 @@ const OtherProActivity = ({ userInfo }) => {
                 <div className="sm:my-10">
                   <NonFound
                     customMessage={
-                      "User has not created any Post-Construction Activity"
+                      displaySearch
+                        ? "No Post-Construction Activity based on search criteria"
+                        : "User has not created any Post-Construction Activity"
                     }
                   />
                 </div>
@@ -287,6 +367,7 @@ const OtherProActivity = ({ userInfo }) => {
             {postConsError && !postConsLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={postConsError?.message}
                   message={"Post-Construction Phase Activities"}
                 />
               </div>
@@ -306,7 +387,7 @@ const OtherProActivity = ({ userInfo }) => {
         <Modal
           onCloseModal={onCloseDetail}
           selectedActivity={selectedActivity}
-          pageRefresh={SetRefreshPage}
+          // pageRefresh={SetRefreshPage}
         />
       )}
     </>
@@ -322,20 +403,29 @@ const CreateActivityModal = ({ onClose, projectId }) => {
     endDate: "",
     file: null,
   });
-  const [success, setSuccess] = useState(null);
-  const [formError, setFormError] = useState(null);
 
-  const { loading, error, setErrToNull, postFileReq } = useAPI();
+  const maxSizeInMB = 300; // Maximum file size in MB
+  const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert MB to Bytes
 
-  useEffect(() => {
-    if (error || formError)
-      var timeInterval = setInterval(() => {
-        setFormError(null);
-        setErrToNull();
-      }, 2000);
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      border: "1px solid black",
+      borderRadius: "8px",
+      // outline: "none"
+      // "&:focus": {
+      //   borderColor: "black",
+      // },
+    }),
+    indicatorSeparator: () => ({ display: "none" }),
+  };
 
-    return () => clearInterval(timeInterval);
-  }, [error, formError]);
+  const {
+    loading: postFileReqLoading,
+    error: postFileReqError,
+    setErrToNull: postFileReqSetErrToNull,
+    postFileReq,
+  } = useAPI();
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -349,23 +439,105 @@ const CreateActivityModal = ({ onClose, projectId }) => {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
       if (file && !allowedTypes.includes(file.type)) {
-        setFormError("Only word, pdf, and image files are allowed.");
-        return;
+        toast.error("Only word, pdf, and image files are allowed.");
       }
+
+      if (file && file.size > maxSizeInBytes) {
+        toast.error(
+          `File size exceeds the ${maxSizeInMB}MB limit. Please upload a smaller file.`
+        );
+      }
+
       setActivityData({ ...activityData, [name]: file });
     } else {
       setActivityData({ ...activityData, [name]: value });
     }
   };
 
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+
+    if (value.trim().length <= 200) {
+      setActivityData({ ...activityData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 200 characters."
+      );
+    }
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
+
+    if (value.trim().length <= 500) {
+      setActivityData({ ...activityData, [name]: value });
+      //  setError("");
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 500 characters."
+      );
+    }
+  };
+
+  const handleProjectPhaseChange = (selectedOption) => {
+    setActivityData({
+      ...activityData,
+      projectPhase: selectedOption,
+    });
+  };
+
+  const closeModalForm = (refresh) => {
+    setActivityData({
+      name: "",
+      description: "",
+      projectPhase: "",
+      startDate: "",
+      endDate: "",
+      file: null,
+    });
+
+    onClose(refresh);
+  };
+
+  const toastId = useRef(null);
+
+  const handleFormErrors = async () => {
+    if (!activityData.name) {
+      toast.error("Name must not be empty");
+      return true;
+    }
+    if (!activityData.startDate) {
+      toast.error("Start Date must be chosen");
+      return true;
+    }
+    if (!activityData.endDate) {
+      toast.error("End Date must be chosen");
+      return true;
+    }
+    // if (!activityData.description) {
+    //   toast.error("Description must not be empty");
+    //   return true;
+    // }
+    if (!activityData.projectPhase) {
+      toast.error("Project Phase must be selected");
+      return true;
+    }
+
+    return false;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrToNull();
-    setFormError();
+    postFileReqSetErrToNull();
+
+    const errors = await handleFormErrors();
+    if (errors) {
+      return;
+    }
 
     // Validate end date is not before start date
     if (new Date(activityData.endDate) < new Date(activityData.startDate)) {
-      setFormError("End date cannot be before start date");
+      toast.error("End date cannot be before start date");
       return;
     }
 
@@ -376,146 +548,134 @@ const CreateActivityModal = ({ onClose, projectId }) => {
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
+
     if (
       activityData.file?.type &&
       !allowedTypes.includes(activityData.file?.type)
     ) {
-      setFormError("Only word, pdf, and image files are allowed.");
+      toast.error("Only word, pdf, and image files are allowed.");
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("projectId", projectId);
-      formData.append("name", activityData.name);
-      formData.append("description", activityData.description);
-      formData.append("projectPhase", activityData.projectPhase);
-      formData.append("startDate", activityData.startDate);
-      formData.append("endDate", activityData.endDate);
-      formData.append("file", activityData.file);
-
-      const response = await postFileReq(
-        "/Activity/OtherPro/CreateActivity",
-        formData
+    if (activityData.file?.size > maxSizeInBytes) {
+      toast.error(
+        `File size exceeds the ${maxSizeInMB}MB limit. Please upload a smaller file.`
       );
-      setSuccess(response?.message);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("projectId", projectId);
+    formData.append("name", activityData.name.trim());
+    formData.append("description", activityData.description.trim());
+    formData.append("projectPhase", activityData.projectPhase?.value);
+    formData.append("startDate", activityData.startDate);
+    formData.append("endDate", activityData.endDate);
+    formData.append("file", activityData.file);
+
+    try {
+      toastId.current = toast.loading("Loading...");
+
+      await postFileReq("/Activity/OtherPro/CreateActivity", formData);
+
+      toast.update(toastId.current, {
+        render: "Activity created Successfully",
+        type: "success",
+        isLoading: false,
+      });
 
       setTimeout(() => {
-        setSuccess(null);
-        closeModalForm();
-      }, 1000);
-    } catch (error) {
-      console.error("Error:", error);
+        toast.dismiss();
+      }, 3000);
+
+      closeModalForm(true);
+    } catch (err) {
+      toast.update(toastId.current, {
+        render: postFileReqError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
     }
-  };
-
-  const closeModalForm = () => {
-    setActivityData({
-      name: "",
-      description: "",
-      projectPhase: "",
-      startDate: "",
-      endDate: "",
-      file: null,
-    });
-
-    onClose();
   };
 
   return (
     <>
-      <div className="activity-modal-overlay">
-        <div className="activity-modal-container">
-          <div className="activity-modal-header">
-            <h2>Create Activity</h2>
-            <button onClick={closeModalForm}>Close</button>
+      <AppModal onCloseModal={() => closeModalForm(false)}>
+        <h2 className="font-semibold text-2xl mb-5">Create Activity</h2>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="mt-3">
+            <InputField
+              InputValue={activityData.name}
+              InputTitle={"Name"}
+              InputName={"name"}
+              OnChange={handleNameChange}
+              maximumLength={200}
+            />
           </div>
-          {success && !loading && <p>Successfully created an activity</p>}
-          {formError && (
-            <div className="error-alert">
-              <p>{formError}</p>
+          <div className="w-full sm:w-2.5/5 flex  justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap mt-3">
+            <div className="w-2.5/5 min-w-fit">
+              <InputField
+                InputValue={activityData?.startDate}
+                InputTitle={"Start Date (mm-dd-yy)"}
+                type="date"
+                InputName={"startDate"}
+                OnChange={handleChange}
+              />
             </div>
-          )}
-          {error && !loading && (
-            <div className="error-alert">
-              <p>{error?.message}</p>
+            <div className="w-2.5/5 min-w-fit">
+              <InputField
+                InputValue={activityData?.endDate}
+                OnChange={handleChange}
+                InputTitle={"End Date (mm-dd-yy)"}
+                type="date"
+                InputName={"endDate"}
+              />
             </div>
-          )}
-          <div className="activity-modal-body">
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <div className="activity-form-group">
-                <label htmlFor="name">Name:</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={activityData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="activity-form-group">
-                <label htmlFor="description">Description:</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={activityData.description}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="activity-form-group">
-                <label htmlFor="projectPhase">Project Phase:</label>
-                <select
-                  id="projectPhase"
-                  name="projectPhase"
-                  value={activityData.projectPhase}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Project Phase</option>
-                  <option value="1">Preconstruction</option>
-                  <option value="2">Construction</option>
-                  <option value="3">Postconstruction</option>
-                </select>
-              </div>
-              <div className="activity-form-group">
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  value={activityData.startDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="activity-form-group">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  type="date"
-                  id="endDate"
-                  name="endDate"
-                  value={activityData.endDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="activity-form-group">
-                <label htmlFor="file">File:</label>
-                <input
-                  type="file"
-                  id="file"
-                  name="file"
-                  onChange={handleChange}
-                  // required
-                />
-              </div>
-              <button type="submit">Submit</button>
-            </form>
           </div>
-        </div>
-      </div>
+          <div className="mt-3">
+            <TextAreaField
+              InputValue={activityData.description}
+              InputTitle={"Description"}
+              InputName={"description"}
+              OnChange={handleDescriptionChange}
+              maximumLength={500}
+            />
+          </div>
+          <div className=" w-2.5/5 min-w-fit mt-3">
+            <SearchSelect
+              InputValue={activityData.projectPhase}
+              InputTitle={"Project Phase"}
+              InputName={"projectPhase"}
+              OnChange={handleProjectPhaseChange}
+              selectOptions={constructionPhases}
+              customStyles={customStyles}
+              Searchable={true}
+            />
+          </div>
+          <div className="mt-3">
+            <label className="ml-3 text-xs font-inter ">File:</label>
+            <div className="border-black-60 focus:border-black focus:outline-none rounded-lg py-1 px-1 md:px-3 mt-1 w-full border-2 border-solid sm:py-2 max-h-24 text-xs md:text-sm lg:text-base">
+              <input
+                type="file"
+                id="file"
+                name="file"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="mt-3">
+            <SubmitGeneralBtn loading={postFileReqLoading}>
+              Submit
+            </SubmitGeneralBtn>
+          </div>
+        </form>
+      </AppModal>
     </>
   );
 };
@@ -540,12 +700,39 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [fileDelete, setFileDelete] = useState(false);
 
+  const maxSizeInMB = 300; // Maximum file size in MB
+  const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert MB to Bytes
+
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+
+    if (value.trim().length <= 200) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 200 characters."
+      );
+    }
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
+
+    if (value.trim().length <= 500) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 500 characters."
+      );
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleModalClose = () => {
-    if (activityChange) {
+  const handleModalClose = (passedChange = false) => {
+    if (passedChange || activityChange) {
       onCloseModal(true);
     } else {
       onCloseModal(false);
@@ -573,7 +760,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
   } = useAPI();
 
   const {
-    error: deleteError,
+    error: deleteFileError,
     setErrToNull: deleteSetErrToNull,
     deleteRequest: deleteFile,
   } = useAPI();
@@ -608,13 +795,18 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
     deleteRequest: deleteActivityReq,
   } = useAPI();
 
+  const {
+    error: activitySendForApprovalError,
+    setErrToNull: activitySendForApprovalSetErrToNull,
+    patch: activitySendForConfirmationReq,
+  } = useAPI();
+
   const handleActivityDelete = async () => {
     deleteActivitySetErrToNull();
     try {
       toastId.current = toast.loading("Loading...");
       await deleteActivityReq(
-        `/Activity/OtherPro/DeleteActivity/${projectId}/${id}`,
-        fileName
+        `/Activity/OtherPro/DeleteActivity/${projectId}/${id}`
       );
 
       toast.update(toastId.current, {
@@ -623,9 +815,9 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         isLoading: false,
       });
 
-      setActivityChange(true);
+      // setActivityChange(true);
       setFormData(null);
-      handleModalClose();
+      handleModalClose(true);
 
       setTimeout(() => {
         toast.dismiss();
@@ -658,7 +850,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         reqbody
       );
 
-      setFormData({ ...formData, status: activityStatusKey.Done});
+      setFormData({ ...formData, status: activityStatusKey.Done });
       setActivityChange(true);
       toast.update(toastId.current, {
         render: "Updated Successfully",
@@ -682,13 +874,101 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
     }
   };
 
-  const handleActivityUpdate = async () => {
-    activityUpdateSetErrToNull();
+  const handleSubmitForApproval = async () => {
+    activitySendForApprovalSetErrToNull();
+
     const reqbody = {
       activityId: id,
       projectId,
-      name,
-      description,
+      statusAction: activityStatusKey["Awaiting Approval"],
+    };
+    try {
+      toastId.current = toast.loading("Loading...");
+      await activitySendForConfirmationReq(
+        `/Activity/OtherPro/SendForApproval`,
+        reqbody
+      );
+      // setEditActivity(false);
+      setFormData({
+        ...formData,
+        status: activityStatusKey["Awaiting Approval"],
+      });
+      setActivityChange(true);
+      toast.update(toastId.current, {
+        render: "Updated Successfully",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        toast.dismiss();
+      }, 3000);
+    } catch (error) {
+      toast.update(toastId.current, {
+        render: activitySendForApprovalError?.message || "Error Occurred",
+        type: "error",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        {
+          toast.dismiss();
+        }
+      }, 3000);
+    }
+  };
+
+  const handleUpdateErrors = async () => {
+    if (!formData.name) {
+      toast.error("Name must not be empty");
+      return true;
+    }
+
+    if (!formData.status) {
+      toast.error("Status must not be empty");
+      return true;
+    }
+
+    if (!formData.startDate) {
+      // setFormError("Name must not be empty");
+      toast.error("Start Date must be chosen");
+      return true;
+    }
+    if (!formData.endDate) {
+      // setFormError("Name must not be empty");
+      toast.error("End Date must be chosen");
+      return true;
+    }
+
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      toast.error("End date cannot be before start date");
+      return;
+    }
+
+    //  if (!formData.description) {
+    //    toast.error("Description must not be empty");
+    //    return true;
+    //  }
+    if (!formData.projectPhase) {
+      // setFormError("Name must not be empty");
+      toast.error("Project Phase must be selected");
+      return true;
+    }
+
+    return false;
+  };
+
+  const handleActivityUpdate = async () => {
+    activityUpdateSetErrToNull();
+
+    const errors = await handleUpdateErrors();
+    if (errors) {
+      return;
+    }
+
+    const reqbody = {
+      activityId: id,
+      projectId,
+      name: name?.trim(),
+      description: description?.trim(),
       projectPhase,
       startDate: ApiDateFormat(startDate),
       endDate: ApiDateFormat(endDate),
@@ -725,6 +1005,23 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
 
   const handleActualDatesUpdate = async () => {
     actualDatesSetErrToNull();
+
+    if (!formData.actualStartDate) {
+      // setFormError("Name must not be empty");
+      toast.error("Actual start date must be chosen");
+      return true;
+    }
+    if (!formData.actualEndDate) {
+      // setFormError("Name must not be empty");
+      toast.error("Actual end date must be chosen");
+      return true;
+    }
+
+    if (new Date(formData.actualEndDate) < new Date(formData.actualStartDate)) {
+      toast.error("Actual end date cannot be before Actual start date");
+      return;
+    }
+
     const reqbody = {
       activityId: id,
       projectId,
@@ -812,7 +1109,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       }, 3000);
     } catch (error) {
       toast.update(toastId.current, {
-        render: deleteError?.message || "Error Deleting File",
+        render: deleteFileError?.message || "Error Deleting File",
         type: "error",
         isLoading: false,
       });
@@ -824,13 +1121,80 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
     }
   };
 
+  const removeEditActualDates = () => {
+    setEditActualDates(false);
+    setFormData({
+      ...formData,
+      actualStartDate:
+        selectedActivity.actualStartDate &&
+        format(new Date(selectedActivity.actualStartDate), "yyyy-MM-dd"),
+      actualEndDate:
+        selectedActivity.actualEndDate &&
+        format(new Date(selectedActivity.actualEndDate), "yyyy-MM-dd"),
+    });
+  };
+
+  const removeEdit = () => {
+    setEditActivity(false);
+    setFormData({
+      ...selectedActivity,
+      startDate: format(new Date(selectedActivity.startDate), "yyyy-MM-dd"),
+      endDate: format(new Date(selectedActivity.endDate), "yyyy-MM-dd"),
+      actualStartDate:
+        selectedActivity.actualStartDate &&
+        format(new Date(selectedActivity.actualStartDate), "yyyy-MM-dd"),
+      actualEndDate:
+        selectedActivity.actualEndDate &&
+        format(new Date(selectedActivity.actualEndDate), "yyyy-MM-dd"),
+    });
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (file && !allowedTypes.includes(file.type)) {
+      toast.error("Only word, pdf, and image files are allowed.");
+    }
+
+    if (file && file.size > maxSizeInBytes) {
+      toast.error(
+        `File size exceeds the ${maxSizeInMB}MB limit. Please upload a smaller file.`
+      );
+    }
+
     setActivityFile(file);
   };
 
   const handleAddActivityFile = async () => {
     addFileSetErrToNull();
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (activityFile?.type && !allowedTypes.includes(activityFile?.type)) {
+      // setFormError("Only word, pdf, and image files are allowed.");
+      toast.error("Only word, pdf, and image files are allowed.");
+      return;
+    }
+
+    if (activityFile?.size > maxSizeInBytes) {
+      toast.error(
+        `File size exceeds the ${maxSizeInMB}MB limit. Please upload a smaller file.`
+      );
+      return;
+    }
+
     try {
       const fileData = new FormData();
       fileData.append("projectId", projectId);
@@ -892,12 +1256,14 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         <div className="pm-modal-body">
           <div className="flex justify-between mt-5 flex-wrap gap-4">
             <div className="w-full lg:w-70">
-              {editActivity ? (
-                <TextAreaField
+              {editActivity && status == 1 ? (
+                <InputField
                   InputValue={name}
                   InputTitle={"Name"}
                   InputName={"name"}
-                  OnChange={handleChange}
+                  OnChange={handleNameChange}
+                  maximumLength={200}
+                  editMode={editActivity}
                 />
               ) : (
                 <FormItemDisplay title={"Name"} value={name} />
@@ -920,6 +1286,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
                     type="date"
                     InputName={"startDate"}
                     OnChange={handleChange}
+                    editMode={editActivity}
                   />
                 </div>
                 <div className="w-2.5/5 min-w-fit">
@@ -929,6 +1296,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
                     InputTitle={"End Date (mm-dd-yy)"}
                     type="date"
                     InputName={"endDate"}
+                    editMode={editActivity}
                   />
                 </div>
               </div>
@@ -949,67 +1317,67 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
                 </div>
               </div>
             )}
-
-            {status != 1 && (
-              <>
-                {editActualDates && status == 2 ? (
-                  <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
-                    <div className=" w-2.5/5 min-w-fit">
-                      <InputField
-                        InputValue={actualStartDate}
-                        InputTitle={"Actual Start Date (mm-dd-yy)"}
-                        type="date"
-                        InputName={"actualStartDate"}
-                        OnChange={handleChange}
-                      />
-                    </div>
-                    <div className=" w-2.5/5 min-w-fit">
-                      <InputField
-                        InputValue={actualEndDate}
-                        OnChange={handleChange}
-                        InputTitle={"Actual End Date (mm-dd-yy)"}
-                        type="date"
-                        InputName={"actualEndDate"}
-                      />
-                    </div>
+            <>
+              {/* {editActualDates && status == 2 ? ( */}
+              {editActualDates && status == 3 ? (
+                <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
+                  <div className=" w-2.5/5 min-w-fit">
+                    <InputField
+                      InputValue={actualStartDate}
+                      InputTitle={"Actual Start Date (mm-dd-yy)"}
+                      type="date"
+                      InputName={"actualStartDate"}
+                      OnChange={handleChange}
+                      editMode={editActualDates}
+                    />
                   </div>
-                ) : (
-                  <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
-                    <div className=" w-2.5/5 min-w-fit">
-                      <FormItemDisplay
-                        title={"Acual Start Date"}
-                        value={
-                          actualStartDate ? GetDate(actualStartDate) : "No date"
-                        }
-                      />
-                    </div>
-                    <div className="w-2.5/5 min-w-fit">
-                      <FormItemDisplay
-                        title={"Acual End Date"}
-                        value={
-                          actualEndDate ? GetDate(actualEndDate) : "No date"
-                        }
-                      />
-                    </div>
+                  <div className=" w-2.5/5 min-w-fit">
+                    <InputField
+                      InputValue={actualEndDate}
+                      OnChange={handleChange}
+                      InputTitle={"Actual End Date (mm-dd-yy)"}
+                      type="date"
+                      InputName={"actualEndDate"}
+                      editMode={editActualDates}
+                    />
                   </div>
-                )}
-              </>
-            )}
+                </div>
+              ) : (
+                <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-4 sm:flex-nowrap">
+                  <div className=" w-2.5/5 min-w-fit">
+                    <FormItemDisplay
+                      title={"Actual Start Date"}
+                      value={
+                        actualStartDate ? GetDate(actualStartDate) : "No date"
+                      }
+                    />
+                  </div>
+                  <div className="w-2.5/5 min-w-fit">
+                    <FormItemDisplay
+                      title={"Actual End Date"}
+                      value={actualEndDate ? GetDate(actualEndDate) : "No date"}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
           </div>
           <div className="mt-3">
-            {editActivity ? (
+            {editActivity && status == 1 ? (
               <TextAreaField
                 InputValue={description}
                 InputTitle={"Description"}
                 InputName={"description"}
-                OnChange={handleChange}
+                OnChange={handleDescriptionChange}
+                editMode={editActivity}
+                maximumLength={500}
               />
             ) : (
               <FormItemDisplayBig title={"Description"} value={description} />
             )}
           </div>
           <div className="w-1/4 min-w-fit mt-3">
-            {editActivity ? (
+            {editActivity && status == 1 ? (
               <SelectInputField
                 InputValue={projectPhase}
                 InputTitle={"Project Phase"}
@@ -1021,6 +1389,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
                   { value: 2, text: "Construction" },
                   { value: 3, text: "Post-Construction" },
                 ]}
+                editMode={editActivity}
               />
             ) : (
               <FormItemDisplay
@@ -1076,50 +1445,65 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
           </div>
 
           <div className="flex gap-2 mt-3">
+            {formData.status === 1 && !editActivity && (
+              <GeneralBtn
+                OnClick={() => {
+                  handleSubmitForApproval();
+                }}
+              >
+                Send For Approval
+              </GeneralBtn>
+            )}
             {status === 1 && (
               <>
                 {editActivity ? (
-                  <GeneralBtn OnClick={handleActivityUpdate}>Submit</GeneralBtn>
+                  <>
+                    {" "}
+                    <GeneralBtn OnClick={handleActivityUpdate}>
+                      Submit
+                    </GeneralBtn>
+                    <ClearBtn OnClick={removeEdit}> Cancel</ClearBtn>
+                  </>
                 ) : (
                   <GeneralBtn OnClick={() => setEditActivity(true)}>
                     Edit
                   </GeneralBtn>
                 )}
-
-                <GeneralBtn
-                  OnClick={() => {
-                    setDeleteModal(true);
-                  }}
-                >
-                  Delete
-                </GeneralBtn>
               </>
             )}
 
-            {status === 3 && (
-              <GeneralBtn
+            {/* {status === 3 && ( */}
+            {(status === 1 || status === 4) && !editActivity && (
+              <ClearBtn
                 OnClick={() => {
                   setDeleteModal(true);
                 }}
               >
                 Delete
-              </GeneralBtn>
+              </ClearBtn>
             )}
 
-            {status === 2 && (
+            {/* //check this condition */}
+            {/* {status === 3 && ( */}
+            {status === 3 && (
               <>
-                {editActualDates ? (
-                  <GeneralBtn OnClick={handleActualDatesUpdate}>
-                    Save Changes
-                  </GeneralBtn>
+                {editActualDates && !editActivity ? (
+                  <>
+                    <GeneralBtn OnClick={handleActualDatesUpdate}>
+                      Save Changes
+                    </GeneralBtn>
+                    <ClearBtn OnClick={removeEditActualDates}>Cancel</ClearBtn>
+                  </>
                 ) : (
                   <GeneralBtn OnClick={() => setEditActualDates(true)}>
                     Update actual dates
                   </GeneralBtn>
                 )}
-                <GeneralBtn OnClick={handleActivityToDone}>
-                  Set As Done
-                </GeneralBtn>
+                {!editActualDates && (
+                  <GeneralBtn OnClick={handleActivityToDone}>
+                    Set As Done
+                  </GeneralBtn>
+                )}
               </>
             )}
           </div>
@@ -1130,3 +1514,210 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
 };
 
 export default OtherProActivity;
+
+// const CreateActivityModalOld = ({ onClose, projectId }) => {
+//   const [activityData, setActivityData] = useState({
+//     name: "",
+//     description: "",
+//     projectPhase: "",
+//     startDate: "",
+//     endDate: "",
+//     file: null,
+//   });
+//   const [success, setSuccess] = useState(null);
+//   const [formError, setFormError] = useState(null);
+
+//   const { loading, error, setErrToNull, postFileReq } = useAPI();
+
+//   useEffect(() => {
+//     if (error || formError)
+//       var timeInterval = setInterval(() => {
+//         setFormError(null);
+//         setErrToNull();
+//       }, 2000);
+
+//     return () => clearInterval(timeInterval);
+//   }, [error, formError]);
+
+//   const handleChange = (e) => {
+//     const { name, value, type, files } = e.target;
+//     if (type === "file") {
+//       const file = files[0];
+//       const allowedTypes = [
+//         "image/jpeg",
+//         "image/png",
+//         "application/pdf",
+//         "application/msword",
+//         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+//       ];
+//       if (file && !allowedTypes.includes(file.type)) {
+//         setFormError("Only word, pdf, and image files are allowed.");
+//         return;
+//       }
+//       setActivityData({ ...activityData, [name]: file });
+//     } else {
+//       setActivityData({ ...activityData, [name]: value });
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setErrToNull();
+//     setFormError();
+
+//     // Validate end date is not before start date
+//     if (new Date(activityData.endDate) < new Date(activityData.startDate)) {
+//       setFormError("End date cannot be before start date");
+//       return;
+//     }
+
+//     const allowedTypes = [
+//       "image/jpeg",
+//       "image/png",
+//       "application/pdf",
+//       "application/msword",
+//       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+//     ];
+//     if (
+//       activityData.file?.type &&
+//       !allowedTypes.includes(activityData.file?.type)
+//     ) {
+//       setFormError("Only word, pdf, and image files are allowed.");
+//       return;
+//     }
+
+//     try {
+//       const formData = new FormData();
+//       formData.append("projectId", projectId);
+//       formData.append("name", activityData.name);
+//       formData.append("description", activityData.description);
+//       formData.append("projectPhase", activityData.projectPhase);
+//       formData.append("startDate", activityData.startDate);
+//       formData.append("endDate", activityData.endDate);
+//       formData.append("file", activityData.file);
+
+//       const response = await postFileReq(
+//         "/Activity/OtherPro/CreateActivity",
+//         formData
+//       );
+//       setSuccess(response?.message);
+
+//       setTimeout(() => {
+//         setSuccess(null);
+//         closeModalForm(true);
+//       }, 1000);
+//     } catch (error) {
+//       console.error("Error:", error);
+//     }
+//   };
+
+//   const closeModalForm = () => {
+//     setActivityData({
+//       name: "",
+//       description: "",
+//       projectPhase: "",
+//       startDate: "",
+//       endDate: "",
+//       file: null,
+//     });
+
+//     onClose();
+//   };
+
+//   return (
+//     <>
+//       <div className="activity-modal-overlay">
+//         <div className="activity-modal-container">
+//           <div className="activity-modal-header">
+//             <h2>Create Activity</h2>
+//             <button onClick={closeModalForm}>Close</button>
+//           </div>
+//           {success && !loading && <p>Successfully created an activity</p>}
+//           {formError && (
+//             <div className="error-alert">
+//               <p>{formError}</p>
+//             </div>
+//           )}
+//           {error && !loading && (
+//             <div className="error-alert">
+//               <p>{error?.message}</p>
+//             </div>
+//           )}
+//           <div className="activity-modal-body">
+//             <form onSubmit={handleSubmit} encType="multipart/form-data">
+//               <div className="activity-form-group">
+//                 <label htmlFor="name">Name:</label>
+//                 <input
+//                   type="text"
+//                   id="name"
+//                   name="name"
+//                   value={activityData.name}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//               </div>
+//               <div className="activity-form-group">
+//                 <label htmlFor="description">Description:</label>
+//                 <textarea
+//                   id="description"
+//                   name="description"
+//                   value={activityData.description}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//               </div>
+//               <div className="activity-form-group">
+//                 <label htmlFor="projectPhase">Project Phase:</label>
+//                 <select
+//                   id="projectPhase"
+//                   name="projectPhase"
+//                   value={activityData.projectPhase}
+//                   onChange={handleChange}
+//                   required
+//                 >
+//                   <option value="">Select Project Phase</option>
+//                   <option value="1">Preconstruction</option>
+//                   <option value="2">Construction</option>
+//                   <option value="3">Postconstruction</option>
+//                 </select>
+//               </div>
+//               <div className="activity-form-group">
+//                 <label htmlFor="startDate">Start Date:</label>
+//                 <input
+//                   type="date"
+//                   id="startDate"
+//                   name="startDate"
+//                   value={activityData.startDate}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//               </div>
+//               <div className="activity-form-group">
+//                 <label htmlFor="endDate">End Date:</label>
+//                 <input
+//                   type="date"
+//                   id="endDate"
+//                   name="endDate"
+//                   value={activityData.endDate}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//               </div>
+//               <div className="activity-form-group">
+//                 <label htmlFor="file">File:</label>
+//                 <input
+//                   type="file"
+//                   id="file"
+//                   name="file"
+//                   onChange={handleChange}
+//                   // required
+//                 />
+//               </div>
+//               <button type="submit">Submit</button>
+//             </form>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };

@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import useAxios from "./useAxios";
 import { api as defaultApi } from "../utils/api";
 import useAuth from "./useAuth";
-import { accessToken, refreshToken } from "../utils/constants";
+import { accessToken, networkErr, refreshToken } from "../utils/constants";
 
 const useAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { setAuth } = useAuth();
-
+  
   const setErrToNull = () => setError(null);
 
   const navigate = useNavigate();
@@ -26,7 +26,10 @@ const useAPI = () => {
       setLoading(false);
       return response.data;
     } catch (error) {
-      setLoading(false);
+      if (error.isAxiosError && error.code === "ECONNABORTED"){
+        setError(networkErr);
+      };
+        setLoading(false);
       setError(error?.response?.data);
       throw error;
     }
@@ -39,6 +42,9 @@ const useAPI = () => {
       setLoading(false);
       return response.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       throw error;
@@ -73,6 +79,9 @@ const useAPI = () => {
       // Return the downloaded blob data if needed
       return response.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       throw error;
@@ -86,6 +95,9 @@ const useAPI = () => {
       setLoading(false);
       return response?.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       throw error;
@@ -99,12 +111,14 @@ const useAPI = () => {
       setLoading(false);
       return response?.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setError(error?.response?.data);
       sessionStorage.removeItem(accessToken);
       sessionStorage.removeItem(refreshToken);
       setLoading(false);
       setAuth({});
-      
 
       throw error;
     }
@@ -117,6 +131,28 @@ const useAPI = () => {
       setLoading(false);
       return response?.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
+      setLoading(false);
+      setError(error?.response?.data);
+      if (error?.response?.status === 401) {
+        navigateToLoginPage();
+      }
+      throw error;
+    }
+  };
+
+  const put = async (url, data) => {
+    try {
+      setLoading(true);
+      const response = await api.put(url, data);
+      setLoading(false);
+      return response?.data;
+    } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       if (error?.response?.status === 401) {
@@ -137,6 +173,9 @@ const useAPI = () => {
       setLoading(false);
       return response?.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       if (error?.response?.status === 401) {
@@ -157,6 +196,9 @@ const useAPI = () => {
       setLoading(false);
       return response?.data;
     } catch (error) {
+      if (error.isAxiosError && error.code === "ECONNABORTED") {
+        setError(networkErr);
+      };
       setLoading(false);
       setError(error?.response?.data);
       if (error?.response?.status === 401) {
@@ -174,6 +216,7 @@ const useAPI = () => {
     post,
     login,
     patch,
+    put,
     postFileReq,
     patchFileReq,
     downloadFile,

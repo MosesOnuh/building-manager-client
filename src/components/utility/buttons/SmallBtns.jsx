@@ -8,13 +8,13 @@ export function DownloadBtn({OnClick}) {
   );
 }
 
-export function DeleteBtn({ OnClick }) {
+export function DeleteBtn({ OnClick, children }) {
   return (
     <button
       className="text-xs bg-red-100 text-black  py-1 px-2 rounded-lg hover:bg-red-400 hover:text-white shadow-l"
       onClick={OnClick}
     >
-      Delete
+      {children || "Delete"}
     </button>
   );
 }

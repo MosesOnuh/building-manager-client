@@ -4,7 +4,7 @@ import { FaXmark } from "react-icons/fa6";
 function AppModal({ children, onCloseModal }) {
   return (
     <div
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 100 }}
       className="fixed top-0 left-0 w-full h-full flex justify-center items-center"
     >
       {/* <div className="activity-display-modal-container"> */}

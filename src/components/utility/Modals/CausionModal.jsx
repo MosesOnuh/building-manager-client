@@ -5,7 +5,7 @@ import { CancelBtn, ProceedBtn } from "../buttons/MainBtns";
 function CausionModal({ message, onCloseModal, handleAction }) {
   return (
     <div
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 100 }}
       className="fixed top-0 left-0 w-full h-full flex justify-center items-center"
     >
       <div className="flex flex-col w-fit items-center row-gap-2 bg-white p-5 rounded-lg mx-auto my-4">

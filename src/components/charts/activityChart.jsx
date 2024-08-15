@@ -1,14 +1,13 @@
-
-
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
-// import { userProfession } from "../../utils/constants";
 import useAPI from "../../hooks/useAPI";
-import { useParams } from "react-router-dom";
-import { generateNewArray } from "../../utils/constants";
+import { generateNewArray, networkErr } from "../../utils/constants";
 import Loader from "../loading/Loading";
-import "./activityChart.css"
-import useMemberInfo from "../../hooks/useMemberInfo";
+import "./activityChart.css";
+import { toast } from "react-toastify";
+import GetErrorNotification from "../utility/GetErrorNotification";
+import { useRef } from "react";
+import { SelectInputField } from "../utility/InputFields";
 
 const columns = [
   { type: "string", label: "Task ID" },
@@ -21,7 +20,6 @@ const columns = [
   { type: "string", label: "Dependencies" },
 ];
 
-
 const options = {
   height: 10000,
   gantt: {
@@ -29,72 +27,161 @@ const options = {
   },
 };
 
-const  ActivityChart = () => {
-    const [activities, setActivities] = useState(null);
-    const [display, setDisplay] = useState(null)
+const ActivityChart = ({ user }) => {
+  const [activities, setActivities] = useState(null);
+  const [display, setDisplay] = useState(null);
+  const [netErr, setNetErr] = useState(false);
+  const [requiredStatus, setRequiredStatus] = useState("");
 
-      // const { user, setUser: setMemberDetail } = useMemberInfo();
-      const { user } = useMemberInfo();
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    setRequiredStatus(e.target.value);
+  };
 
-    const {
-    loading,
-    error,
-    setErrToNull,
-    get,
-  } = useAPI();
+  const { loading, error, setErrToNull, get } = useAPI();
 
-  let projectId = user?.projectId
+  let projectId = user?.projectId;
+
+  const toastId = useRef(null);
 
   useEffect(() => {
-    // let preConsUrl = `https://localhost:7129/api/Activity/user/Getactivities/?projectId=${projectId}`;
-    let Url = `/Activity/user/Getactivities/${projectId}`;
+    let Url = `/Activity/user/Getactivities?projectId=${projectId}&requiredStatus=${requiredStatus}`;
 
     const fetchData = async () => {
       try {
         setErrToNull();
         const response = await get(Url);
         setActivities(response);
-        // setDisplay(response?.data)
         const rows = generateNewArray(response?.data);
         const data = [columns, ...rows];
-        setDisplay(data)
-        console.log(response);
+        console.log("graph page data", response);
+        console.log("gantt data", data);
+        setDisplay(data);
+        // console.log(response);
       } catch (err) {
         setActivities(null);
       }
     };
 
     fetchData();
+  }, [projectId, requiredStatus]);
 
+  // const [err, setErr] = useState(null);
+  // const [isChartsLoaded, setIsChartsLoaded] = useState(false);
 
-  }, [projectId]);
+  useEffect(() => {
+    if (!navigator.onLine) {
+      setNetErr(true);
+      toast.error(networkErr);
+    }
+  }, []);
 
-//   const rows = generateNewArray(display);
-//   const data = [columns, ...rows];
-    //  setDisplay(data)
-    
   return (
     <>
-      {error && (
-        <div className="error-alert">
-          <p>{error?.message}</p>
+      <div className="w-1/4 min-w-fit my-3">
+        <SelectInputField
+          InputValue={requiredStatus}
+          InputTitle={"Status"}
+          InputName={"requiredStatus"}
+          OnChange={handleChange}
+          selectOptions={[
+            { value: "", text: "All" },
+            { value: "1", text: "Pending" },
+            { value: "2", text: "Approved" },
+            { value: "3", text: "Rejected" },
+            { value: "4", text: "Done" },
+          ]}
+        />
+      </div>
+      {netErr && (
+        <div className="sm:my-10">
+          <GetErrorNotification message={"Chart data"} />
+        </div>
+      )}
+      {!netErr && error && !loading && (
+        <div className="sm:my-10">
+          <GetErrorNotification customMessage={error?.message} message={"Chart data"} />
         </div>
       )}
       {loading && <Loader />}
-      {activities && !loading && !error && (
-        <div className="scroll-horizontal">
+      {/* {activities && !loading && !error && isChartsLoaded && ( */}
+      {activities?.data?.length > 0 && !loading && !error && !netErr && (
+        <div className="overflow-x-auto">
           <Chart
             chartType="Gantt"
             width="100%"
             height="50%"
-            //   data={data}
             data={display}
             options={options}
           />
         </div>
       )}
+      {activities?.data?.length < 1 && !loading && !error && !netErr && (
+        //  {activities && !loading && !error && !netErr && (
+        <GetErrorNotification
+          customMessage={"No activities has been created"}
+        />
+      )}
     </>
   );
-}
+};
+
+// const  ActivityChart = ({user}) => {
+//     const [activities, setActivities] = useState(null);
+//     const [display, setDisplay] = useState(null)
+
+//     const {
+//     loading,
+//     error,
+//     setErrToNull,
+//     get,
+//   } = useAPI();
+
+//   let projectId = user?.projectId
+
+//   useEffect(() => {
+//     let Url = `/Activity/user/Getactivities/${projectId}`;
+
+//     const fetchData = async () => {
+//       try {
+//         setErrToNull();
+//         const response = await get(Url);
+//         setActivities(response);
+//         // setDisplay(response?.data)
+//         const rows = generateNewArray(response?.data);
+//         const data = [columns, ...rows];
+//         setDisplay(data)
+//         console.log(response);
+//       } catch (err) {
+//         setActivities(null);
+//       }
+//     };
+
+//     fetchData();
+
+//   }, [projectId]);
+
+//   return (
+//     <>
+//       {error && (
+//         <div className="error-alert">
+//           <p>{error?.message}</p>
+//         </div>
+//       )}
+//       {loading && <Loader />}
+//       {activities && !loading && !error && (
+//         <div className="overflow-x-auto">
+//           <Chart
+//             chartType="Gantt"
+//             width="100%"
+//             height="50%"
+//             data={display}
+//             options={options}
+//           />
+//         </div>
+//       )}
+//     </>
+//   );
+// }
 
 export default ActivityChart;

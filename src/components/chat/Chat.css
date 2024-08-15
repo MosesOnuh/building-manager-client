@@ -1,0 +1,15 @@
+.chat-history-wrapper {
+  height: 450px;
+  {{/* max-height: 450px;
+  min-height: 450px; */}}
+}
+
+.message-container {
+  max-width: 300px;
+}
+
+{{/* @media (max-width: 420px) {
+  .chat-history-wrapper {
+    max-height: 400px;
+  }
+} */}}

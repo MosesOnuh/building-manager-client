@@ -5,7 +5,6 @@ function DateInput({
   InputName,
   PlaceHolder,
   InputValue,
-  // value,
   OnChange,
   loading
 }) {

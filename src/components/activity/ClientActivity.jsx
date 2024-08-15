@@ -9,7 +9,7 @@ import {
   userProfession,
 } from "../../utils/constants";
 import Pagination from "../pagination/Pagination";
-import { GetDate } from "../../utils/timeUtil";
+import { ApiDateFormat, GetDate } from "../../utils/timeUtil";
 import "./OtherProActivity.css";
 import "./ClientActivity.css";
 import { constructionPhasesValue } from "../../utils/constants";
@@ -21,6 +21,10 @@ import FormItemDisplay, {
 } from "../utility/FormItemDisplay";
 import { DownloadBtn } from "../utility/buttons/SmallBtns";
 import { toast } from "react-toastify";
+import GetErrorNotification from "../utility/GetErrorNotification";
+import GeneralBtn, { ClearBtn } from "../utility/buttons/MainBtns";
+import { InputField, SelectInputField } from "../utility/InputFields";
+import NonFound from "../utility/NonFound";
 
 const ClientActivity = ({ userInfo }) => {
   const [preConstCurrentPage, setPreConstCurrentPage] = useState(1);
@@ -31,6 +35,29 @@ const ClientActivity = ({ userInfo }) => {
   const [postConsPhaseData, setPostConsPhaseData] = useState(null);
   const [viewDetail, setViewDetail] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [formData, setFormData] = useState({
+    requiredDate: "",
+    requiredStatus: "",
+  });
+  const [isSearch, setIsSearch] = useState(false);
+  const [displaySearch, setDisplaySearch] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value };
+    });
+  };
+
+  const handleSearch = (e) => {
+    setIsSearch(!isSearch);
+    setDisplaySearch(true);
+  };
+
+  const handleSearchClear = () => {
+    setFormData({ requiredDate: "", requiredStatus: "" });
+    setDisplaySearch(false);
+    setIsSearch(!isSearch);
+  };
 
   const onCloseDetail = (isRefresh) => {
     setSelectedActivity(null);
@@ -64,7 +91,8 @@ const ClientActivity = ({ userInfo }) => {
   const { projectId } = useParams();
 
   useEffect(() => {
-    let preConsUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=1&pageNumber=${preConstCurrentPage}&pageSize=${paginationPageSize}`;
+    // let preConsUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=1&pageNumber=${preConstCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
+    let preConsUrl = `/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=1&pageNumber=${preConstCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchPreConsData = async () => {
       try {
@@ -77,10 +105,10 @@ const ClientActivity = ({ userInfo }) => {
     };
 
     fetchPreConsData();
-  }, [projectId, preConstCurrentPage, userInfo]);
+  }, [projectId, preConstCurrentPage, userInfo, isSearch]);
 
   useEffect(() => {
-    let consUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}`;
+    let consUrl = `/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=2&pageNumber=${constCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchConsData = async () => {
       try {
@@ -93,10 +121,10 @@ const ClientActivity = ({ userInfo }) => {
     };
 
     fetchConsData();
-  }, [projectId, constCurrentPage, userInfo]);
+  }, [projectId, constCurrentPage, userInfo, isSearch]);
 
   useEffect(() => {
-    let postConsUrl = `https://localhost:7129/api/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}`;
+    let postConsUrl = `/Activity/PM/GetProjectPhaseActivities?projectId=${projectId}&projectPhase=3&pageNumber=${postConstCurrentPage}&pageSize=${paginationPageSize}&requiredDate=${formData.requiredDate}&requiredStatus=${formData.requiredStatus}`;
 
     const fetchPostConsData = async () => {
       try {
@@ -109,7 +137,7 @@ const ClientActivity = ({ userInfo }) => {
     };
 
     fetchPostConsData();
-  }, [projectId, postConstCurrentPage, userInfo]);
+  }, [projectId, postConstCurrentPage, userInfo, isSearch]);
 
   return (
     <>
@@ -118,9 +146,44 @@ const ClientActivity = ({ userInfo }) => {
           <p>{preConsError?.message}</p>
         </div>
       )}
-      {(preConsLoading || consLoading) && <Loader />}
+
       <>
         <div className="activity-tables">
+          <div className="mt-3 mb-10 flex  min-w-fit flex-wrap gap-4">
+            <div className="w-1/5 min-w-fit">
+              <SelectInputField
+                InputValue={formData.requiredStatus}
+                InputTitle={"Status"}
+                InputName={"requiredStatus"}
+                OnChange={handleChange}
+                selectOptions={[
+                  { value: "", text: "All" },
+                  { value: "1", text: "Pending" },
+                  { value: "2", text: "Awaiting Approval" },
+                  { value: "3", text: "Approved" },
+                  { value: "4", text: "Rejected" },
+                  { value: "5", text: "Done" },
+                ]}
+              />
+            </div>
+            <div className=" min-w-fit">
+              <InputField
+                InputValue={formData.requiredDate}
+                InputTitle={"Required Date (mm-dd-yy)"}
+                type="date"
+                InputName={"requiredDate"}
+                OnChange={handleChange}
+              />
+            </div>
+
+            <div className="pt-5">
+              <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
+            </div>
+            <div className="pt-5">
+              <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+            </div>
+          </div>
+          {(preConsLoading || consLoading || postConsLoading) && <Loader />}
           <div className="phase-wrapper">
             {preConsPhaseData?.data?.length > 0 &&
               !preConsLoading &&
@@ -128,6 +191,8 @@ const ClientActivity = ({ userInfo }) => {
                 <>
                   <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
                     Pre-Construction Phase Activities
+                    {displaySearch &&
+                      ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                   </p>
                   <div
                     style={{ width: "98%" }}
@@ -150,13 +215,18 @@ const ClientActivity = ({ userInfo }) => {
             {preConsPhaseData?.data?.length == 0 && !preConsLoading && (
               <div className="sm:my-10">
                 <NonFound
-                  customMessage={"No Preconstruction Activity has been created"}
+                  customMessage={
+                    displaySearch
+                      ? "No Preconstruction Activity based on search criteria"
+                      : "No Preconstruction Activity has been created"
+                  }
                 />
               </div>
             )}
             {preConsError && !preConsLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={preConsError?.message}
                   message={"Pre-Construction Phase Activities"}
                 />
               </div>
@@ -167,6 +237,8 @@ const ClientActivity = ({ userInfo }) => {
               <>
                 <p className="font-bold text-xs md:text-sm lg:text-base my-3">
                   Construction Phase Activities
+                  {displaySearch &&
+                    ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                 </p>
                 <div
                   style={{ width: "98%" }}
@@ -189,13 +261,18 @@ const ClientActivity = ({ userInfo }) => {
             {consPhaseData?.data?.length == 0 && !consLoading && !consError && (
               <div className="sm:my-10">
                 <NonFound
-                  customMessage={"No Construction Activity has been created"}
+                  customMessage={
+                    displaySearch
+                      ? "No Construction Activity based on search criteria"
+                      : "No Construction Activity has been created"
+                  }
                 />
               </div>
             )}
             {consError && !consLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={consError?.message}
                   message={"Construction Phase Activities"}
                 />
               </div>
@@ -208,6 +285,8 @@ const ClientActivity = ({ userInfo }) => {
                 <>
                   <p className="font-bold text-xs md:text-sm lg:text-base my-3">
                     Post-Construction Phase Activities
+                    {displaySearch &&
+                      ` (${GetDate(ApiDateFormat(formData.requiredDate))})`}
                   </p>
                   <div
                     style={{ width: "98%" }}
@@ -233,7 +312,9 @@ const ClientActivity = ({ userInfo }) => {
                 <div className="sm:my-10">
                   <NonFound
                     customMessage={
-                      "No Post-Construction Activity has been created"
+                      displaySearch
+                        ? "No Post-Construction Activity based on search criteria"
+                        : "No Post-Construction Activity has been created"
                     }
                   />
                 </div>
@@ -241,6 +322,7 @@ const ClientActivity = ({ userInfo }) => {
             {postConsError && !postConsLoading && (
               <div className="sm:my-10">
                 <GetErrorNotification
+                  customMessage={postConsError?.message}
                   message={"Post-Construction Phase Activities"}
                 />
               </div>
@@ -258,7 +340,8 @@ const ClientActivity = ({ userInfo }) => {
   );
 };
 
-const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
+// const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
+const Modal = ({ onCloseModal, selectedActivity}) => {
   const [formData, setFormData] = useState({
     ...selectedActivity,
     startDate: format(new Date(selectedActivity.startDate), "yyyy-MM-dd"),
@@ -378,7 +461,7 @@ const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
                 <div className="w-full sm:w-2.5/5  flex justify-between min-w-fit flex-wrap gap-3 sm:flex-nowrap">
                   <div className=" w-2.5/5 min-w-fit">
                     <FormItemDisplay
-                      title={"Acual Start Date"}
+                      title={"Actual Start Date"}
                       value={
                         actualStartDate ? GetDate(actualStartDate) : "No date"
                       }
@@ -386,7 +469,7 @@ const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
                   </div>
                   <div className="w-2.5/5 min-w-fit">
                     <FormItemDisplay
-                      title={"Acual End Date"}
+                      title={"Actual End Date"}
                       value={actualEndDate ? GetDate(actualEndDate) : "No date"}
                     />
                   </div>
