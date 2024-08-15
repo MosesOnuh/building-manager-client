@@ -10,6 +10,8 @@ export const InputField = ({
   InputValue,
   OnChange,
   loading,
+  editMode,
+  maximumLength
 }) => {
   return (
     <>
@@ -17,16 +19,21 @@ export const InputField = ({
         {InputTitle}
       </label>
       <input
-        // style={{ borderColor: "rgb(0,0,0,0.6)" }}
-        className="border-indigo-400 focus:border-indigo-700 focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base"
+        className={`${
+          editMode
+            ? "border-indigo-400 focus:border-indigo-700"
+            : "border-black-60 focus:border-black"
+        } focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base`}
         type={type || "text"}
-        placeholder={PlaceHolder || InputTitle}
+        // placeholder={PlaceHolder || InputTitle}
+        placeholder={PlaceHolder && PlaceHolder}
         name={InputName || InputTitle}
         value={InputValue}
         onChange={OnChange}
         // required
         id={InputName}
         disabled={loading}
+        maxLength={maximumLength + 1}
       />
     </>
   );
@@ -41,6 +48,8 @@ export const TextAreaField = ({
   // value,
   OnChange,
   loading,
+  editMode,
+  maximumLength
 }) => {
   return (
     <>
@@ -49,7 +58,12 @@ export const TextAreaField = ({
       </label>
       <textarea
         // style={{ borderColor: "rgb(0,0,0,0.6)" }}
-        className="border-indigo-400 focus:border-indigo-700 focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base"
+        // className="border-indigo-400 focus:border-indigo-700 focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base"
+        className={`${
+          editMode
+            ? "border-indigo-400 focus:border-indigo-700"
+            : "border-black-60 focus:border-black"
+        } focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base`}
         id={InputName}
         name={InputName || InputTitle}
         value={InputValue}
@@ -57,6 +71,7 @@ export const TextAreaField = ({
         disabled={loading}
         // required
         rows={3}
+        maxLength={maximumLength + 1}
       />
     </>
   );
@@ -71,6 +86,7 @@ export const SelectInputField = ({
   OnChange,
   loading,
   selectOptions,
+  editMode
 }) => {
   return (
     <>
@@ -83,7 +99,12 @@ export const SelectInputField = ({
       </label>
       <select
         // style={{ borderColor: "rgb(0,0,0,0.6)" }}
-        className="border-indigo-400 focus:border-indigo-700 focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base"
+        // className="border-indigo-400 focus:border-indigo-700 focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base"
+        className={`${
+          editMode
+            ? "border-indigo-400 focus:border-indigo-700"
+            : "border-black-60 focus:border-black"
+        } focus:outline-none rounded-lg py-1 pl-2 mt-1 w-full border-2 border-solid sm:py-2 text-xs md:text-sm lg:text-base`}
         id={InputName}
         name={InputName || InputTitle}
         value={InputValue}
@@ -149,8 +170,9 @@ export const SearchSelect = ({
         onChange={OnChange}
         options={selectOptions}
         styles={customStyles}
-        // placeholder="Select Country"
         isSearchable={Searchable}
+        maxMenuHeight={100}
+        classNamePrefix = {"seachSelect"}
       />
     </>
   );

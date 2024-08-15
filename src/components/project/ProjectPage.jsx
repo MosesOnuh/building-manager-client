@@ -16,6 +16,7 @@ import SubmitBtn from "../utility/buttons/SubmitBtn";
 import { Country, State } from "country-state-city";
 import { toast } from "react-toastify";
 import ProjectTable from "../utility/table/ProjectTable";
+import NonFound from "../utility/NonFound";
 
 const ProjectsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,12 +77,15 @@ const ProjectsPage = () => {
 
   return (
     <>
-      <div className="pageWrapper mx-4 sm:mx-6 md:mx-10 lg:mx-15 mb-10">
+      <div className="pageWrapper mx-4 sm:mx-6 md:mx-10 lg:mx-15 mb-10 mt-5">
+        <h2 className="font-extrabold sm:text-lg md:text-2xl mb-10">
+          Your Building Projects
+        </h2>
         <button
           onClick={() => {
             setViewForm(true);
           }}
-          className="mt-3 block ml-auto border-2 border-gray-200 text-black h-fit py-1 px-3 sm:px-4 rounded-lg hover:bg-blue-200 shadow-l text-xs md:text-sm lg:text-base"
+          className="mt-3 mb-3 block ml-auto border-2 border-gray-200 text-black h-fit py-1 px-3 sm:px-4 rounded-lg hover:bg-blue-200 shadow-l text-xs md:text-sm lg:text-base"
         >
           Create project
         </button>
@@ -91,15 +95,15 @@ const ProjectsPage = () => {
             <GetErrorNotification message={"Projects"} />
           </div>
         )}
-        {!error && !loading && projectItems.length < 1 && (
-          <p>User has no projects</p>
+        {!error && !loading && projectItems?.length < 1 && (
+          <NonFound customMessage={"User has no projects"} />
         )}
 
         {!error && !loading && projectItems.length > 0 && (
           <>
-            <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
+            {/* <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
               Projects
-            </p>
+            </p> */}
             <div style={{ width: "98%" }} className="mx-auto mb-3">
               <ProjectTable
                 items={AddSerialNumber(

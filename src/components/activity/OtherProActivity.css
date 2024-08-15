@@ -1,4 +1,4 @@
-.activity-modal-overlay {
+{{/* .activity-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -51,11 +51,13 @@
   background-color: #0056b3;
 }
 
-.activity-modal-body {
-  max-height: 400px; /* Set maximum height */
-  overflow-y: auto; /* Enable vertical scrolling */
-}
+
 
 .activity-form-group {
   margin-bottom: 20px;
 }
+
+.activity-modal-body {
+  max-height: 400px; 
+  overflow-y: auto; 
+} */}}
