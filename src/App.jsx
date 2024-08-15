@@ -52,3 +52,6 @@ function App() {
 }
 
 export default App;
+
+// "@chakra-ui/drawer": "^1.0.0-next.3",
+// "@chakra-ui/react": "^2.8.2",
