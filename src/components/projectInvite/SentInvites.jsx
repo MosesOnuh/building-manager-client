@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import GeneralBtn from "../utility/buttons/MainBtns";
-import { GetDate } from "../../utils/timeUtil";
+import { GetDate, GetDateAndTime } from "../../utils/timeUtil";
 import { FaHouse } from "react-icons/fa6";
 import GetErrorNotification from "../utility/GetErrorNotification";
 import NonFound from "../utility/NonFound";
@@ -91,9 +91,8 @@ function SentInvites() {
                             {item?.status === 3 && <span style={{color: "rgba(233, 48, 48, 1)"}}><strong>Rejected</strong></span>}
                           </p>
                           {item?.status != 1 && (
-                            <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDate(
-                              item?.updatedAt
-                            )}`}</p>
+                            // <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDate(item?.updatedAt)}`}</p>
+                            <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDateAndTime(item?.updatedAt)}`}</p>
                           )}
                           {/* {item?.status === 1 && (
                             <GeneralBtn>Unsend</GeneralBtn>

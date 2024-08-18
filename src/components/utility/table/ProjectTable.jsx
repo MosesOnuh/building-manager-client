@@ -25,7 +25,7 @@ function ProjectTable({ items, NavigateToProject }) {
             onClick={() => NavigateToProject(item.id)}
             className={`${
               index % 2 == 0 ? "bg-white" : "bg-gray-200"
-            }  hover:border hover:border-gray-800 `}
+            }  hover:border hover:border-gray-800 cursor-pointer `}
             // className="hover:bg-indigo-300 focus:bg-gray:500"
           >
             <td className="w-5 py-2 text-center">{item.serialNumber}</td>
