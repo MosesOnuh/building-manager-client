@@ -104,7 +104,11 @@ const ProjectsPage = () => {
             {/* <p className="my-3 font-bold text-xs md:text-sm lg:text-base">
               Projects
             </p> */}
-            <div style={{ width: "98%" }} className="mx-auto mb-3">
+            {/* <div style={{ width: "98%" }} className="mx-auto mb-3"> */}
+            <div
+              style={{ width: "98%" }}
+              className="mx-auto mb-3 overflow-x-auto"
+            >
               <ProjectTable
                 items={AddSerialNumber(
                   projectItems,

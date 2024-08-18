@@ -81,18 +81,38 @@ function SentInvites() {
                             </span>
                           </p>
                           <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">
-                            {`Invited ${GetDate(item?.createdAt)}`}
+                            {`Invited ${GetDateAndTime(item?.createdAt)}`}
                           </p>
                         </div>
                         <div className="min-w-fit mb-2 flex flex-col gap-1 sm:gap-2 items-center  justify-center w-10 py-2">
                           <p className="text-xs sm:text-sm md:text-base lg:text-lg">
-                            {item?.status === 1 && <span style={{color: "rgba(156, 168, 21, 1)"}}><strong>Pending</strong></span>}
-                            {item?.status === 2 && <span style={{color: "rgba(68, 82, 206, 1)"}}><strong>Accepted</strong></span>}
-                            {item?.status === 3 && <span style={{color: "rgba(233, 48, 48, 1)"}}><strong>Rejected</strong></span>}
+                            {item?.status === 1 && (
+                              <span
+                                style={{ color: "rgba(156, 168, 21, 1)" }}
+                              >
+                                <strong>Pending</strong>
+                              </span>
+                            )}
+                            {item?.status === 2 && (
+                              <span style={{ color: "rgba(68, 82, 206, 1)" }}>
+                                <strong>Accepted</strong>
+                              </span>
+                            )}
+                            {item?.status === 3 && (
+                              <span style={{ color: "rgba(233, 48, 48, 1)" }}>
+                                <strong>Rejected</strong>
+                              </span>
+                            )}
                           </p>
                           {item?.status != 1 && (
-                            // <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDate(item?.updatedAt)}`}</p>
-                            <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDateAndTime(item?.updatedAt)}`}</p>
+                            <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">{`${GetDateAndTime(
+                              item?.updatedAt
+                            )}`}</p>
+                          )}
+                          {item?.status == 1 && (
+                            <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base invisible">{`${GetDateAndTime(
+                              item?.updatedAt
+                            )}`}</p>
                           )}
                           {/* {item?.status === 1 && (
                             <GeneralBtn>Unsend</GeneralBtn>

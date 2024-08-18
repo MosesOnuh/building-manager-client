@@ -10,6 +10,7 @@ export const api = axios.create({
     baseURL: "https://buildingapp.runasp.net/api/",
 })
 
+// export const chatApi = "https://localhost:7129/api"
 export const chatApi = "https://buildingapp.runasp.net/"
 
 // export default api;

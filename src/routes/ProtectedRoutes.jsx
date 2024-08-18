@@ -67,8 +67,8 @@ function SideBar() {
 
   const linkStyle = ({ isActive }) =>
     isActive
-      ? "bg-black text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
-      : "text-white hover:bg-gray-900 px-3 py-2 rounded-lg";
+      ? "bg-black text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm "
+      : "text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm ";
 
   // const navigateToProjectsPage = () => {
   //   navigate("/projects");
@@ -112,7 +112,7 @@ function SideBar() {
       <div></div>
       <div className="nav-items gap-x-2 flex md:gap-x-4">
         <NavLink
-          className="text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
+          className="text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm "
           to="/projects"
         >
           Projects
@@ -122,7 +122,7 @@ function SideBar() {
         </NavLink>
         <button
           onClick={logOut}
-          className="text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
+          className="text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm "
         >
           Logout
         </button>

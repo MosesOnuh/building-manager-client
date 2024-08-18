@@ -416,29 +416,29 @@ const SinglePaymentReq = ({ projectId, onClose, members }) => {
     }
   };
 
-   const handleNameChange = (e) => {
-     const { name, value } = e.target;
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
 
-     if (value.trim().length <= 200) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 200 characters."
-       );
-     }
-   };
+    if (value.trim().length <= 200) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 200 characters."
+      );
+    }
+  };
 
-   const handleDescriptionChange = (e) => {
-     const { name, value } = e.target;
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
 
-     if (value.trim().length <= 500) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 500 characters."
-       );
-     }
-   };
+    if (value.trim().length <= 500) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 500 characters."
+      );
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -564,14 +564,14 @@ const MultiplePaymentReq = ({ projectId, onClose, members }) => {
     });
   }, [formData.items]);
 
-   const handleRemoveItem = (current) => {
-     let oldItems = [...formData?.items];
-     let newItems = oldItems.filter((v) => v.id != current.id);
+  const handleRemoveItem = (current) => {
+    let oldItems = [...formData?.items];
+    let newItems = oldItems.filter((v) => v.id != current.id);
 
-     setFormData((prevState) => {
-       return { ...prevState, items: newItems };
-     });
-   };
+    setFormData((prevState) => {
+      return { ...prevState, items: newItems };
+    });
+  };
 
   const handleAddItem = () => {
     if (!item.name) {
@@ -620,29 +620,29 @@ const MultiplePaymentReq = ({ projectId, onClose, members }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-   const handleNameChange = (e) => {
-     const { name, value } = e.target;
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
 
-     if (value.trim().length <= 200) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 200 characters."
-       );
-     }
-   };
+    if (value.trim().length <= 200) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 200 characters."
+      );
+    }
+  };
 
-   const handleDescriptionChange = (e) => {
-     const { name, value } = e.target;
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
 
-     if (value.trim().length <= 500) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 500 characters."
-       );
-     }
-   };
+    if (value.trim().length <= 500) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 500 characters."
+      );
+    }
+  };
 
   const handleItemChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
@@ -806,6 +806,7 @@ const MultiplePaymentReq = ({ projectId, onClose, members }) => {
               <FormItemDisplay
                 title={"Total Amount (₦)"}
                 value={formatAmount(parseFloat(item.totalAmount))}
+                Style={"bg-white"}
               />
             </div>
           </div>

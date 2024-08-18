@@ -11,8 +11,8 @@ const DefaultNav = () => {
 
   const linkStyle = ({ isActive }) =>
     isActive
-      ? "bg-black text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
-      : "text-white hover:bg-gray-900 px-3 py-2 rounded-lg";
+      ? "bg-black text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm "
+      : "text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm ";
 
     // isActive
     //   ? "text-white border-b-2 border-solid border-black px-3 py-2"
@@ -25,7 +25,7 @@ const DefaultNav = () => {
           <nav className="bg-indigo-700 px-2 flex py-3 justify-between sm:px-10">
             <NavLink
               to="/"
-              className="md:text-2xl text-white hover:bg-gray-900 px-3 py-2 rounded-lg"
+              className="md:text-2xl text-white hover:bg-gray-900 px-3 py-2 rounded-lg text-xs md:text-sm "
             >
               Building Manager
             </NavLink>

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { accessToken, refreshToken } from "../../utils/constants";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const { auth, setAuth } = useAuth();
@@ -15,6 +16,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loading, error, setErrToNull, login } = useAPI();
 
@@ -24,6 +26,10 @@ const Login = () => {
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   useEffect(() => {
@@ -83,7 +89,9 @@ const Login = () => {
         <div className="modal-wrapper ">
           <section className="bg-white py-10 pb-20 px-10 rounded-xl mx-auto md:w-2/5 max-w-96 md:shadow-xl ">
             {/* shadow-2xl */}
-            <h1 className="font-inter text-2xl mb-10 text-center font-semibold">Sign In</h1>
+            <h1 className="font-inter text-2xl mb-10 text-center font-semibold">
+              Sign In
+            </h1>
             <form className="" onSubmit={onSubmit}>
               <div className="mb-5">
                 <label
@@ -110,16 +118,39 @@ const Login = () => {
                 >
                   Password
                 </label>
-                <input
-                  style={{ borderColor: "rgb(0,0,0,0.6)" }}
-                  className="  rounded-md py-1 pl-2 mt-1 w-full border-x border-y border-solid border-black"
-                  type="password"
-                  // placeholder="Password"
-                  name="password"
-                  value={password}
-                  required
-                  onChange={onChange}
-                />
+                <div style={{ position: "relative" }}>
+                  <input
+                    // style={{ paddingRight: "30px" }}
+                    style={{
+                      borderColor: "rgb(0,0,0,0.6)",
+                      paddingRight: "30px",
+                    }}
+                    className="  rounded-md py-1 pl-2 mt-1 w-full border-x border-y border-solid border-black"
+                    // type="password"
+                    type={showPassword ? "text" : "password"}
+                    // placeholder="Password"
+                    name="password"
+                    value={password}
+                    required
+                    onChange={onChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      position: "absolute",
+                      right: "5px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "0",
+                    }}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
 
               <input
