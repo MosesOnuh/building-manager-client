@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import GeneralBtn, {ClearBtn} from "../utility/buttons/MainBtns";
-import { GetDate } from "../../utils/timeUtil";
+import GeneralBtn, { ClearBtn } from "../utility/buttons/MainBtns";
+import { GetDate, GetDateAndTime } from "../../utils/timeUtil";
 import { FaHouse } from "react-icons/fa6";
 import GetErrorNotification from "../utility/GetErrorNotification";
 import NonFound from "../utility/NonFound";
@@ -9,34 +9,6 @@ import Loader from "../loading/Loading";
 import { toast } from "react-toastify";
 
 function ReceivedInvites() {
-  // const items = [
-  //   {
-  //     projectName: "Lekki phase one projects",
-  //     userFirstName: "Micheal",
-  //     userLastName: "Johnson",
-  //     CreatedAt: "2024-05-26 12:27:33.407",
-  //   },
-  //   {
-  //     projectName: "Lekki phase one projects",
-  //     userFirstName: "Micheal",
-  //     userLastName: "Johnson",
-  //     CreatedAt: "2024-05-26 12:27:33.407",
-  //   },
-  //   {
-  //     projectName:
-  //       "Lekki phase one projects loremmmmmmmmmmmm mmmmmmmmmmmmmmmmmmmmmmm mmmmmmmmmmmmmmmmmmmmmmmmmmmm mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
-  //     userFirstName: "Micheal",
-  //     userLastName: "Johnson",
-  //     CreatedAt: "2024-05-26 12:27:33.407",
-  //   },
-  //   {
-  //     projectName: "Lekki phase one projects",
-  //     userFirstName: "Micheal",
-  //     userLastName: "Johnson",
-  //     CreatedAt: "2024-05-26 12:27:33.407",
-  //   },
-  // ];
-
   const [invites, setInvites] = useState([]);
   const [refreshPage, SetRefreshPage] = useState(false);
 
@@ -47,7 +19,6 @@ function ReceivedInvites() {
       try {
         const response = await get(`/project/user/GetReceivedProjectInvites`);
         setInvites(response);
-        // setInvites(items);
 
         setErrToNull();
       } catch (err) {
@@ -83,7 +54,9 @@ function ReceivedInvites() {
         render: `${
           action === 2
             ? "Successfully Accepted Project Invite"
-            :  action === 3 ? "Successfully Rejected Project Invite" : ""
+            : action === 3
+            ? "Successfully Rejected Project Invite"
+            : ""
         }`,
         type: "success",
         isLoading: false,
@@ -117,7 +90,6 @@ function ReceivedInvites() {
           </div>
         )}
         {!error && !loading && invites?.length < 1 && (
-          // <p>User has no projects</p>
           <NonFound customMessage={"User has no pending invites"} />
         )}
         {!error && !loading && invites?.length > 0 && (
@@ -151,7 +123,8 @@ function ReceivedInvites() {
                             </span>
                           </p>
                           <p className="text-gray-500 text-xxs md:text-xs lg:text-sm  xl:text-base">
-                            {`Invited ${GetDate(item?.createdAt)}`}
+                            {/* {`Invited ${GetDate(item?.createdAt)}`} */}
+                            {`Invited ${GetDateAndTime(item?.createdAt)}`}
                           </p>
                         </div>
                         <div className="min-w-fit mb-2 flex items-center">

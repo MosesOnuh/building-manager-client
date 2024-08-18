@@ -45,14 +45,15 @@ function ProjMembersTable({ items, handleBlock, blockLoading, user }) {
           <th className="w-10  border-indigo-700" style={{ minWidth: "68px" }}>
             Joined At
           </th>
-          {user?.role === 1 && (
-            <th
-              className="w-10  border-indigo-700"
-              style={{ minWidth: "68px" }}
-            >
-              Action
-            </th>
-          )}
+          {user?.role === 1 &&
+            members?.length > 1 && (
+              <th
+                className="w-10  border-indigo-700"
+                style={{ minWidth: "68px" }}
+              >
+                Action
+              </th>
+            )}
         </tr>
       </thead>
       <tbody>
