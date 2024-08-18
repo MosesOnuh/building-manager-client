@@ -92,7 +92,7 @@ export const SelectInputField = ({
     <>
       <label
         htmlFor={InputName}
-        style={{ minWidth: "fit-content" }}
+        // style={{ minWidth: "fit-content" }}
         className="block ml-3 text-xs font-inter "
       >
         {InputTitle}
@@ -165,15 +165,18 @@ export const SearchSelect = ({
         {InputTitle}
       </label>
 
-      <Select
-        value={InputValue}
-        onChange={OnChange}
-        options={selectOptions}
-        styles={customStyles}
-        isSearchable={Searchable}
-        maxMenuHeight={100}
-        classNamePrefix = {"seachSelect"}
-      />
+      <div className="text-xs md:text-sm">
+        {" "}
+        <Select
+          value={InputValue}
+          onChange={OnChange}
+          options={selectOptions}
+          styles={customStyles}
+          isSearchable={Searchable}
+          maxMenuHeight={150}
+          classNamePrefix={"seachSelect"}
+        />
+      </div>
     </>
   );
 };

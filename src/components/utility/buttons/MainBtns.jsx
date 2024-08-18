@@ -5,10 +5,10 @@ function GeneralBtn({ children, loading, OnClick }) {
     <button
       onClick={OnClick}
       //removed mt-3
-      className={`rounded-2xl py-2 px-5 text-xs md:text-sm lg:text-base ${
+      className={`rounded-2xl py-2 px-5 text-xs md:text-sm lg:text-base border-2 ${
         loading
-          ? "bg-indigo-500 hover:bg-indigo-500"
-          : "bg-indigo-700 hover:bg-indigo-900"
+          ? "bg-indigo-500 hover:bg-indigo-500 border-indigo-500"
+          : "bg-indigo-700 hover:bg-indigo-900 hover:border-indigo-900"
       }  hover:text-white text-white`}
       // type="submit" value={Title}
       disabled={loading}

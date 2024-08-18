@@ -45,15 +45,14 @@ function ProjMembersTable({ items, handleBlock, blockLoading, user }) {
           <th className="w-10  border-indigo-700" style={{ minWidth: "68px" }}>
             Joined At
           </th>
-          {user?.role === 1 &&
-            members?.length > 1 && (
-              <th
-                className="w-10  border-indigo-700"
-                style={{ minWidth: "68px" }}
-              >
-                Action
-              </th>
-            )}
+          {user?.role === 1 && members?.length > 1 && (
+            <th
+              className="w-10  border-indigo-700"
+              style={{ minWidth: "68px" }}
+            >
+              Action
+            </th>
+          )}
         </tr>
       </thead>
       <tbody>
@@ -105,35 +104,41 @@ function ProjMembersTable({ items, handleBlock, blockLoading, user }) {
               <td></td>
             )} */}
 
-            {user?.role === 1 && user?.userId !== item?.userId && (
-              <td className="w-10  py-2 px-1 text-center">
-                {item?.userAccess === 1 && item?.userId !== userBlockId && (
-                  <>
-                    <DeleteBtn
-                      OnClick={() =>
-                        handleMemberBlock(item, memberProjectAccess.block)
-                      }
-                    >
-                      Block
-                    </DeleteBtn>
-                  </>
-                )}
-                {item?.userAccess === 2 && item?.userId !== userBlockId && (
-                  <>
-                    <SmallDefaultBtn
-                      OnClick={() =>
-                        handleMemberBlock(item, memberProjectAccess.unBlock)
-                      }
-                    >
-                      UnBlock
-                    </SmallDefaultBtn>
-                  </>
-                )}
-                {blockLoading && item?.userId == userBlockId && <ClipLoader />}
-              </td>
-            )}
+            {members?.length > 1 &&
+              user?.role === 1 &&
+              user?.userId !== item?.userId && (
+                <td className="w-10  py-2 px-1 text-center">
+                  {item?.userAccess === 1 && item?.userId !== userBlockId && (
+                    <>
+                      <DeleteBtn
+                        OnClick={() =>
+                          handleMemberBlock(item, memberProjectAccess.block)
+                        }
+                      >
+                        Block
+                      </DeleteBtn>
+                    </>
+                  )}
+                  {item?.userAccess === 2 && item?.userId !== userBlockId && (
+                    <>
+                      <SmallDefaultBtn
+                        OnClick={() =>
+                          handleMemberBlock(item, memberProjectAccess.unBlock)
+                        }
+                      >
+                        UnBlock
+                      </SmallDefaultBtn>
+                    </>
+                  )}
+                  {blockLoading && item?.userId == userBlockId && (
+                    <ClipLoader />
+                  )}
+                </td>
+              )}
 
-            {user?.role === 1 && user?.userId == item?.userId && <td></td>}
+            {user?.role === 1 &&
+              user?.userId == item?.userId &&
+              members?.length > 1 && <td></td>}
           </tr>
         ))}
       </tbody>
