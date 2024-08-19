@@ -318,7 +318,7 @@ const SinglePaymentReq = ({ projectId, onClose }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       onClose(true);
     } catch (err) {
@@ -331,7 +331,7 @@ const SinglePaymentReq = ({ projectId, onClose }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -543,7 +543,6 @@ const MultiplePaymentReq = ({ projectId, onClose }) => {
   } = useAPI();
 
   const handleFormErrors = async () => {
-
     if (!name) {
       toast.error("Name must not be empty");
       return true;
@@ -613,7 +612,7 @@ const MultiplePaymentReq = ({ projectId, onClose }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       onClose(true);
     } catch (err) {
@@ -626,7 +625,7 @@ const MultiplePaymentReq = ({ projectId, onClose }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -928,7 +927,7 @@ const SingleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: addFileError?.message || "Error Adding File",
@@ -939,7 +938,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -959,7 +958,7 @@ const SingleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadFileError?.message || "Error Downloading File",
@@ -970,7 +969,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -989,7 +988,7 @@ const SingleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render:
@@ -1001,7 +1000,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1029,7 +1028,7 @@ const SingleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: payReqUpdateError?.message || "Error Occurred",
@@ -1040,7 +1039,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1069,7 +1068,7 @@ const SingleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: payReqSendForConfirmationError?.message || "Error Occurred",
@@ -1080,7 +1079,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1102,7 +1101,7 @@ const SingleRequestView = ({
       setDeleteModal(false);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteFileError?.message || "Error Deleting File",
@@ -1113,7 +1112,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1137,7 +1136,7 @@ const SingleRequestView = ({
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deletePayReqError?.message || "Error Deleting Payment Request",
@@ -1148,7 +1147,7 @@ const SingleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1600,7 +1599,7 @@ const MultipleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: addFileError?.message || "Error Adding File",
@@ -1611,7 +1610,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1631,7 +1630,7 @@ const MultipleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadFileError?.message || "Error Downloading File",
@@ -1642,7 +1641,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1661,7 +1660,7 @@ const MultipleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render:
@@ -1673,7 +1672,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1741,7 +1740,7 @@ const MultipleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       console.log(error);
       toast.update(toastId.current, {
@@ -1753,7 +1752,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1782,7 +1781,7 @@ const MultipleRequestView = ({
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: payReqSendForConfirmationError?.message || "Error Occurred",
@@ -1793,7 +1792,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1815,7 +1814,7 @@ const MultipleRequestView = ({
       setDeleteModal(false);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteFileError?.message || "Error Deleting File",
@@ -1826,7 +1825,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1851,7 +1850,7 @@ const MultipleRequestView = ({
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       console.log(error);
       toast.update(toastId.current, {
@@ -1863,7 +1862,7 @@ const MultipleRequestView = ({
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1951,7 +1950,7 @@ const MultipleRequestView = ({
                       InputTitle={"Service/Item Name"}
                       type="text"
                       InputName={"name"}
-                      OnChange={handleItemChange}                      
+                      OnChange={handleItemChange}
                     />
                   </div>
                   <div className="w-full xs:w-2.5/5 min-w-fit">

@@ -17,7 +17,7 @@ import FormItemDisplay, {
   FormItemDisplayBig,
 } from "../utility/FormItemDisplay";
 import { ApiDateFormat, GetDate } from "../../utils/timeUtil";
-import GeneralBtn, {ClearBtn} from "../utility/buttons/MainBtns";
+import GeneralBtn, { ClearBtn } from "../utility/buttons/MainBtns";
 import { Country, State } from "country-state-city";
 import { format } from "date-fns";
 import ProjMembersTable from "../utility/table/ProjMembersTable";
@@ -36,9 +36,9 @@ function ProjectInfo() {
     state: "",
   });
 
-  const [getData, setGetData] = useState(false)
+  const [getData, setGetData] = useState(false);
 
-  const [backupProjData, setBackupProjData] = useState(null)
+  const [backupProjData, setBackupProjData] = useState(null);
 
   const [editProj, setEditProj] = useState(false);
   const [countries, setCountries] = useState([]);
@@ -120,12 +120,12 @@ function ProjectInfo() {
     get: getProjData,
   } = useAPI();
 
-   const {
+  const {
     loading: memberBlockLoading,
-     error: memberBlockError,
-     setErrToNull: memberBlockSetErrToNull,
-     patch: memberBlockReq,
-   } = useAPI();
+    error: memberBlockError,
+    setErrToNull: memberBlockSetErrToNull,
+    patch: memberBlockReq,
+  } = useAPI();
 
   const {
     // loading: projUpdateLoading,
@@ -164,8 +164,6 @@ function ProjectInfo() {
           country: "",
           state: "",
         });
-        
-
       }
     };
 
@@ -224,7 +222,7 @@ function ProjectInfo() {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: projUpdateError?.message || "Error Occurred",
@@ -235,13 +233,13 @@ function ProjectInfo() {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
   const handleMemberBlock = async (userId, action) => {
     memberBlockSetErrToNull();
-    const reqbody = { 
+    const reqbody = {
       projectId,
       userId: userId,
       statusAction: action,
@@ -250,18 +248,15 @@ function ProjectInfo() {
     try {
       toastId.current = toast.loading("Loading...");
       await memberBlockReq(`/Project/PM/UserAccess`, reqbody);
-      
 
       toast.update(toastId.current, {
-        render: `Member ${
-          action === 2 ? "Blocked" : "UnBlocked"
-        } Successfully`,
+        render: `Member ${action === 2 ? "Blocked" : "UnBlocked"} Successfully`,
         type: "success",
         isLoading: false,
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
       return true;
     } catch (error) {
       toast.update(toastId.current, {
@@ -273,7 +268,7 @@ function ProjectInfo() {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
 
       return false;
     }
@@ -286,10 +281,10 @@ function ProjectInfo() {
     }
   };
 
-  const removeEdit = () =>{
-    setEditProj(false)
-    setProjData({...backupProjData})
-  }
+  const removeEdit = () => {
+    setEditProj(false);
+    setProjData({ ...backupProjData });
+  };
   return (
     <div className="mx-4 sm:mx-6 md:mx-10 lg:mx-15 mb-10 ">
       {/* <h2>project info</h2> */}
@@ -560,7 +555,7 @@ const ProjectInviteModal = ({ onCloseModal, Countries }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       handleModalClose(true);
     } catch (err) {
@@ -573,7 +568,7 @@ const ProjectInviteModal = ({ onCloseModal, Countries }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 

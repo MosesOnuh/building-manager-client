@@ -72,7 +72,7 @@ const Signup = () => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
       navigateToLoginPage();
     } catch (err) {
       sessionStorage.removeItem(accessToken);
@@ -86,7 +86,7 @@ const Signup = () => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
 
     // if (data) {

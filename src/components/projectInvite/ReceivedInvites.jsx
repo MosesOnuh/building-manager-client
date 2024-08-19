@@ -65,7 +65,7 @@ function ReceivedInvites() {
       SetRefreshPage(!refreshPage);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: inviteAcceptanceError?.message || "Error Occurred",
@@ -76,7 +76,7 @@ function ReceivedInvites() {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 

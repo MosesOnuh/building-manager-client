@@ -14,7 +14,7 @@ export const InputField = ({
   maximumLength
 }) => {
   return (
-    <>
+    <div className="w-full">
       <label htmlFor={InputName} className="block ml-3 text-xs font-inter ">
         {InputTitle}
       </label>
@@ -35,12 +35,11 @@ export const InputField = ({
         disabled={loading}
         maxLength={maximumLength + 1}
       />
-    </>
+    </div>
   );
 };
 
 export const TextAreaField = ({
-  type,
   InputTitle,
   InputName,
   InputValue,
@@ -52,7 +51,7 @@ export const TextAreaField = ({
   maximumLength
 }) => {
   return (
-    <>
+    <div className="w-full">
       <label htmlFor={InputName} className="block ml-3 text-xs font-inter ">
         {InputTitle}
       </label>
@@ -73,7 +72,7 @@ export const TextAreaField = ({
         rows={3}
         maxLength={maximumLength + 1}
       />
-    </>
+    </div>
   );
 };
 
@@ -89,7 +88,7 @@ export const SelectInputField = ({
   editMode
 }) => {
   return (
-    <>
+    <div className="w-full">
       <label
         htmlFor={InputName}
         // style={{ minWidth: "fit-content" }}
@@ -116,7 +115,7 @@ export const SelectInputField = ({
           return <option value={item.value}> {item.text}</option>;
         })}
       </select>
-    </>
+    </div>
   );
 };
 
