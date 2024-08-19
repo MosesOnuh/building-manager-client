@@ -168,7 +168,7 @@ const CreateProjectModal = ({ onCloseModal, Countries }) => {
     post: createProject,
     error: createProjectError,
     setErrToNull: createProjectSetErrToNull,
-    loading: createProjLoading
+    loading: createProjLoading,
   } = useAPI();
 
   const handleFormErrors = async () => {
@@ -245,7 +245,7 @@ const CreateProjectModal = ({ onCloseModal, Countries }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       handleModalClose(true);
     } catch (error) {
@@ -258,7 +258,7 @@ const CreateProjectModal = ({ onCloseModal, Countries }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 

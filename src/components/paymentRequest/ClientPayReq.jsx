@@ -222,7 +222,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //     });
   //     setTimeout(() => {
   //       toast.dismiss();
-  //     }, 3000);
+  //     }, 4000);
   //   } catch (error) {
   //     toast.update(toastId.current, {
   //       render: payReqConfirmationError?.message || "Error Occurred",
@@ -233,7 +233,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //       {
   //         toast.dismiss();
   //       }
-  //     }, 3000);
+  //     }, 4000);
   //   }
   // };
 
@@ -255,7 +255,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //     setDeleteModal(false);
   //     setTimeout(() => {
   //       toast.dismiss();
-  //     }, 3000);
+  //     }, 4000);
   //   } catch (error) {
   //     toast.update(toastId.current, {
   //       render: deleteFileError?.message || "Error Deleting File",
@@ -266,7 +266,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //       {
   //         toast.dismiss();
   //       }
-  //     }, 3000);
+  //     }, 4000);
   //   }
   // };
 
@@ -312,7 +312,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //     });
   //     setTimeout(() => {
   //       toast.dismiss();
-  //     }, 3000);
+  //     }, 4000);
   //   } catch (error) {
   //     toast.update(toastId.current, {
   //       render: addFileError?.message || "Error Adding File",
@@ -323,7 +323,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
   //       {
   //         toast.dismiss();
   //       }
-  //     }, 3000);
+  //     }, 4000);
   //   }
   // };
 
@@ -355,7 +355,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadFileError?.message || "Error Downloading File",
@@ -366,7 +366,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -385,7 +385,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render:
@@ -397,7 +397,7 @@ const SingleRequestView = ({ selectedPayReq }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -580,7 +580,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: addFileError?.message || "Error Adding File",
@@ -591,7 +591,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -611,7 +611,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadFileError?.message || "Error Downloading File",
@@ -622,7 +622,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -641,7 +641,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render:
@@ -653,7 +653,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -679,7 +679,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: payReqConfirmationError?.message || "Error Occurred",
@@ -690,7 +690,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -712,7 +712,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
       setDeleteModal(false);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteFileError?.message || "Error Deleting File",
@@ -723,7 +723,7 @@ const MultipleRequestView = ({ selectedPayReq, handlePageRefresh }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 

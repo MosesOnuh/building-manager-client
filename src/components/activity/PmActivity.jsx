@@ -180,7 +180,7 @@ const PmActivity = ({ userInfo }) => {
       </button>
       <>
         <div className="activity-tables">
-          <div className="mt-3 mb-8 flex  min-w-fit flex-wrap gap-1 sm:gap-4">
+          <div className="mt-3 mb-8 flex min-w-fit flex-wrap gap-2 sm:gap-4 items-center">
             <div className="w-1/5 min-w-fit">
               <SelectInputField
                 InputValue={formData.requiredStatus}
@@ -206,12 +206,13 @@ const PmActivity = ({ userInfo }) => {
                 OnChange={handleChange}
               />
             </div>
-
-            <div className="pt-5">
-              <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
-            </div>
-            <div className="pt-5">
-              <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+            <div className="flex gap-2 sm:gap-4">
+              <div className="pt-5">
+                <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
+              </div>
+              <div className="pt-5">
+                <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+              </div>
             </div>
           </div>
           {(preConsLoading || consLoading || postConsLoading) && <Loader />}
@@ -670,7 +671,7 @@ const CreateActivityModal = ({ onClose, userInfo }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       closeModalForm(true);
     } catch (err) {
@@ -684,7 +685,7 @@ const CreateActivityModal = ({ onClose, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -894,30 +895,29 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
     });
   };
 
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
 
-   const handleNameChange = (e) => {
-     const { name, value } = e.target;
+    if (value.trim().length <= 200) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 200 characters."
+      );
+    }
+  };
 
-     if (value.trim().length <= 200) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 200 characters."
-       );
-     }
-   };
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
 
-   const handleDescriptionChange = (e) => {
-     const { name, value } = e.target;
-
-     if (value.trim().length <= 500) {
-       setFormData({ ...formData, [name]: value });
-     } else {
-       toast.error(
-         "Character limit exceeded. You can only enter up to 500 characters."
-       );
-     }
-   };
+    if (value.trim().length <= 500) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      toast.error(
+        "Character limit exceeded. You can only enter up to 500 characters."
+      );
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -1020,7 +1020,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activityApprovalError?.message || "Error Occurred",
@@ -1031,7 +1031,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1051,7 +1051,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadError?.message || "Error Downloading File",
@@ -1062,7 +1062,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1086,7 +1086,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteActivityError?.message || "Error Deleting Activity",
@@ -1097,7 +1097,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1124,7 +1124,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activityToDoneError?.message || "Error Occurred",
@@ -1135,7 +1135,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1221,7 +1221,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activityUpdateError?.message || "Error Occurred",
@@ -1232,7 +1232,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1276,7 +1276,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: actualDatesError?.message || "Error Occurred",
@@ -1287,7 +1287,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1308,7 +1308,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       setDeleteModal(false);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteFileError?.message || "Error Deleting File",
@@ -1319,7 +1319,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1417,7 +1417,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       // console.log("herrr", error)
       toast.update(toastId.current, {
@@ -1429,7 +1429,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1930,7 +1930,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
 //       });
 //       setTimeout(() => {
 //         toast.dismiss();
-//       }, 3000);
+//       }, 4000);
 //     } catch (error) {
 //       toast.update(toastId.current, {
 //         render: activityApprovalError?.message || "Error Occurred",
@@ -1941,7 +1941,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
 //         {
 //           toast.dismiss();
 //         }
-//       }, 3000);
+//       }, 4000);
 //     }
 //   };
 
@@ -1961,7 +1961,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
 //       });
 //       setTimeout(() => {
 //         toast.dismiss();
-//       }, 3000);
+//       }, 4000);
 //     } catch (error) {
 //       toast.update(toastId.current, {
 //         render: downloadError?.message || "Error Downloading File",
@@ -1972,7 +1972,7 @@ const Modal = ({ onCloseModal, selectedActivity, userInfo }) => {
 //         {
 //           toast.dismiss();
 //         }
-//       }, 3000);
+//       }, 4000);
 //     }
 //   };
 

@@ -54,7 +54,7 @@ const Login = () => {
       setTimeout(() => {
         // toast.dismiss(toastId.current);
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       sessionStorage.setItem(accessToken, response?.data?.accessToken);
       sessionStorage.setItem(refreshToken, response?.data?.refreshToken);
@@ -75,7 +75,7 @@ const Login = () => {
           // toast.dismiss(toastId.current);
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
 
     console.log("Success");

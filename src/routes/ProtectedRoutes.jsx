@@ -1,4 +1,10 @@
-import { Outlet, useNavigate, useLocation, Navigate, NavLink } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+  Navigate,
+  NavLink,
+} from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 // import {
 //   ChakraProvider,
@@ -94,7 +100,7 @@ function SideBar() {
         type: "success",
         isLoading: false,
       });
-      setTimeout(() => toast.dismiss(), 3000);
+      setTimeout(() => toast.dismiss(), 4000);
       setErrToNull();
       navigateToLoginPage;
     } catch (err) {
@@ -103,7 +109,7 @@ function SideBar() {
         type: "error",
         isLoading: false,
       });
-      setTimeout(() => toast.dismiss(), 3000);
+      setTimeout(() => toast.dismiss(), 4000);
     }
   };
 
@@ -162,7 +168,7 @@ function SideBar() {
 //         type: "success",
 //         isLoading: false,
 //       });
-//       setTimeout(() => toast.dismiss(), 3000);
+//       setTimeout(() => toast.dismiss(), 4000);
 //       setErrToNull();
 //       navigateToLoginPage;
 //     } catch (err) {
@@ -171,7 +177,7 @@ function SideBar() {
 //         type: "error",
 //         isLoading: false,
 //       });
-//       setTimeout(() => toast.dismiss(), 3000);
+//       setTimeout(() => toast.dismiss(), 4000);
 //     }
 //   };
 

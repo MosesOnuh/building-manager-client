@@ -182,7 +182,7 @@ const OtherProActivity = ({ userInfo }) => {
 
       <>
         <div className="activity-tables">
-          <div className="mt-3 mb-8 flex  min-w-fit flex-wrap gap-1  sm:gap-4">
+          <div className="mt-3 mb-8 flex min-w-fit flex-wrap gap-2 sm:gap-4 items-center">
             <div className="w-1/5 min-w-fit">
               <SelectInputField
                 InputValue={formData.requiredStatus}
@@ -208,12 +208,13 @@ const OtherProActivity = ({ userInfo }) => {
                 OnChange={handleChange}
               />
             </div>
-
-            <div className="pt-5">
-              <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
-            </div>
-            <div className="pt-5">
-              <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+            <div className="flex gap-2 sm:gap-4">
+              <div className="pt-5">
+                <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
+              </div>
+              <div className="pt-5">
+                <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+              </div>
             </div>
           </div>
           {(preConsLoading || consLoading || postConsLoading) && <Loader />}
@@ -586,7 +587,7 @@ const CreateActivityModal = ({ onClose, projectId }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
 
       closeModalForm(true);
     } catch (err) {
@@ -600,7 +601,7 @@ const CreateActivityModal = ({ onClose, projectId }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -821,7 +822,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
 
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteActivityError?.message || "Error Deleting Activity",
@@ -832,7 +833,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -859,7 +860,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activityToDoneError?.message || "Error Occurred",
@@ -870,7 +871,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -901,7 +902,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activitySendForApprovalError?.message || "Error Occurred",
@@ -912,7 +913,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -988,7 +989,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: activityUpdateError?.message || "Error Occurred",
@@ -999,7 +1000,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1043,7 +1044,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: actualDatesError?.message || "Error Occurred",
@@ -1054,7 +1055,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1074,7 +1075,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadFileError?.message || "Error Downloading File",
@@ -1085,7 +1086,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1106,7 +1107,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       setDeleteModal(false);
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: deleteFileError?.message || "Error Deleting File",
@@ -1117,7 +1118,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -1214,7 +1215,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: addFileError?.message || "Error Adding File",
@@ -1225,7 +1226,7 @@ const Modal = ({ onCloseModal, selectedActivity }) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 

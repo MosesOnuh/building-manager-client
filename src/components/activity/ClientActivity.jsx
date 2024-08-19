@@ -149,7 +149,7 @@ const ClientActivity = ({ userInfo }) => {
 
       <>
         <div className="activity-tables">
-          <div className="mt-3 mb-10 flex  min-w-fit flex-wrap gap-4">
+          <div className="mt-3 mb-10 flex min-w-fit flex-wrap gap-2 sm:gap-4 items-center">
             <div className="w-1/5 min-w-fit">
               <SelectInputField
                 InputValue={formData.requiredStatus}
@@ -175,12 +175,13 @@ const ClientActivity = ({ userInfo }) => {
                 OnChange={handleChange}
               />
             </div>
-
-            <div className="pt-5">
-              <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
-            </div>
-            <div className="pt-5">
-              <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+            <div className="flex gap-2 sm:gap-4">
+              <div className="pt-5">
+                <GeneralBtn OnClick={handleSearch}>Search</GeneralBtn>
+              </div>
+              <div className="pt-5">
+                <ClearBtn OnClick={handleSearchClear}>Clear</ClearBtn>
+              </div>
             </div>
           </div>
           {(preConsLoading || consLoading || postConsLoading) && <Loader />}
@@ -341,7 +342,7 @@ const ClientActivity = ({ userInfo }) => {
 };
 
 // const Modal = ({ onCloseModal, selectedActivity, pageRefresh }) => {
-const Modal = ({ onCloseModal, selectedActivity}) => {
+const Modal = ({ onCloseModal, selectedActivity }) => {
   const [formData, setFormData] = useState({
     ...selectedActivity,
     startDate: format(new Date(selectedActivity.startDate), "yyyy-MM-dd"),
@@ -397,7 +398,7 @@ const Modal = ({ onCloseModal, selectedActivity}) => {
       });
       setTimeout(() => {
         toast.dismiss();
-      }, 3000);
+      }, 4000);
     } catch (error) {
       toast.update(toastId.current, {
         render: downloadError?.message || "Error Downloading File",
@@ -408,7 +409,7 @@ const Modal = ({ onCloseModal, selectedActivity}) => {
         {
           toast.dismiss();
         }
-      }, 3000);
+      }, 4000);
     }
   };
 
