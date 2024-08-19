@@ -87,9 +87,10 @@ const ActivityChart = ({ user }) => {
           selectOptions={[
             { value: "", text: "All" },
             { value: "1", text: "Pending" },
-            { value: "2", text: "Approved" },
-            { value: "3", text: "Rejected" },
-            { value: "4", text: "Done" },
+            { value: "2", text: "Awaiting Approval" },
+            { value: "3", text: "Approved" },
+            { value: "4", text: "Rejected" },
+            { value: "5", text: "Done" },
           ]}
         />
       </div>
@@ -100,7 +101,10 @@ const ActivityChart = ({ user }) => {
       )}
       {!netErr && error && !loading && (
         <div className="sm:my-10">
-          <GetErrorNotification customMessage={error?.message} message={"Chart data"} />
+          <GetErrorNotification
+            customMessage={error?.message}
+            message={"Chart data"}
+          />
         </div>
       )}
       {loading && <Loader />}
