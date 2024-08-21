@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import GetErrorNotification from "../utility/GetErrorNotification";
 import { useRef } from "react";
 import { SelectInputField } from "../utility/InputFields";
+import { ChartEndDateFormatter } from "../../utils/timeUtil";
 
 const columns = [
   { type: "string", label: "Task ID" },
@@ -34,7 +35,6 @@ const ActivityChart = ({ user }) => {
   const [requiredStatus, setRequiredStatus] = useState("");
 
   const handleChange = (e) => {
-    console.log(e.target.value);
     setRequiredStatus(e.target.value);
   };
 
@@ -52,12 +52,11 @@ const ActivityChart = ({ user }) => {
         setErrToNull();
         const response = await get(Url);
         setActivities(response);
-        const rows = generateNewArray(response?.data);
+        // const rows = generateNewArray(response?.data);
+        const rows = generateNewArray(ChartEndDateFormatter(response?.data));
         const data = [columns, ...rows];
-        console.log("graph page data", response);
-        console.log("gantt data", data);
+        // console.log("gantt data", data);
         setDisplay(data);
-        // console.log(response);
       } catch (err) {
         setActivities(null);
       }
@@ -65,9 +64,6 @@ const ActivityChart = ({ user }) => {
 
     fetchData();
   }, [projectId, requiredStatus]);
-
-  // const [err, setErr] = useState(null);
-  // const [isChartsLoaded, setIsChartsLoaded] = useState(false);
 
   useEffect(() => {
     if (!navigator.onLine) {
