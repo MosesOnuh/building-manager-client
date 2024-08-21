@@ -68,7 +68,7 @@ function Pm_ClientPayReqTable({ items, displayPayReq }) {
               {GetDate(item?.createdAt)}
             </td>
             <td className="w-10  py-2 px-1 text-center">
-              {GetDate(item?.confirmedAt)}
+              {item?.confirmedAt ? GetDate(item?.confirmedAt) : "No date"}
             </td>
             <td className="w-10  py-2 px-1 text-center">
               {paymentRequestStatus[item?.status]}
