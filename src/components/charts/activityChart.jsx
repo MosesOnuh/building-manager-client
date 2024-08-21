@@ -35,7 +35,6 @@ const ActivityChart = ({ user }) => {
   const [requiredStatus, setRequiredStatus] = useState("");
 
   const handleChange = (e) => {
-    // console.log(e.target.value);
     setRequiredStatus(e.target.value);
   };
 
@@ -53,17 +52,11 @@ const ActivityChart = ({ user }) => {
         setErrToNull();
         const response = await get(Url);
         setActivities(response);
-        console.log("first response", response)
         // const rows = generateNewArray(response?.data);
-        console.log("herree1")
         const rows = generateNewArray(ChartEndDateFormatter(response?.data));
-        console.log("here2")
-        // console.log(rows)
         const data = [columns, ...rows];
-        // console.log("graph page data", response);
-        console.log("gantt data", data);
+        // console.log("gantt data", data);
         setDisplay(data);
-        // console.log(response);
       } catch (err) {
         setActivities(null);
       }
@@ -71,9 +64,6 @@ const ActivityChart = ({ user }) => {
 
     fetchData();
   }, [projectId, requiredStatus]);
-
-  // const [err, setErr] = useState(null);
-  // const [isChartsLoaded, setIsChartsLoaded] = useState(false);
 
   useEffect(() => {
     if (!navigator.onLine) {
