@@ -1471,7 +1471,11 @@ const SingleRequestView = ({
             <div className="w-1/4 min-w-fit">
               <FormItemDisplay
                 title={"Date Confirmed"}
-                value={format(new Date(formData?.confirmedAt), "yyyy-MM-dd")}
+                value={
+                  formData?.confirmedAt
+                    ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd")
+                    : "No date"
+                }
               />
             </div>
           )}
@@ -1479,7 +1483,11 @@ const SingleRequestView = ({
             <div className="w-1/4 min-w-fit">
               <FormItemDisplay
                 title={"Date Rejected"}
-                value={format(new Date(formData?.confirmedAt), "yyyy-MM-dd")}
+                value={
+                  formData?.confirmedAt
+                    ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd")
+                    : "No date"
+                }
               />
             </div>
           )}
@@ -2280,7 +2288,11 @@ const MultipleRequestView = ({
             <div className="w-1/4 min-w-fit">
               <FormItemDisplay
                 title={"Date Confirmed"}
-                value={format(new Date(formData?.confirmedAt), "yyyy-MM-dd")}
+                value={
+                  formData?.confirmedAt
+                    ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd")
+                    : "No date"
+                }
               />
             </div>
           )}
@@ -2288,7 +2300,7 @@ const MultipleRequestView = ({
             <div className="w-1/4 min-w-fit">
               <FormItemDisplay
                 title={"Date Rejected"}
-                value={format(new Date(formData?.confirmedAt), "yyyy-MM-dd")}
+                value={formData?.confirmedAt ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd") : "No date"}
               />
             </div>
           )}
