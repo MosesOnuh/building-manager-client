@@ -1,3 +1,4 @@
+import { parse, isValid } from 'date-fns';
 
 
 export const paginationPageSize = 8;
@@ -109,65 +110,6 @@ export const paymentRequestStatus = {
     4 : 'Rejected'
 }
 
-export function generateNewArray(items) {
-      return items.map((item) => {
-        const {
-          activityId,
-          firstName,
-          lastName,
-          profession,
-          startDate,
-          endDate,
-        } = item;
-
-        const formattedStartDate = new Date(startDate);
-        const formattedEndDate = new Date(endDate);
-        const today = new Date();
-        let durationInMilliseconds;
-
-        if (formattedEndDate < formattedStartDate) {
-          // If end date is before start date, set duration to 0
-          durationInMilliseconds = 0;
-        } else if (today < formattedStartDate) {
-          // If today is before start date, set duration to 0
-          durationInMilliseconds = 0;
-        } else if (
-          today.getTime() === formattedStartDate.getTime() &&
-          today.getHours() < formattedEndDate.getHours()
-        ) {
-          // If today's date is the same as the start date and the time of today is before the time of end date, calculate percentage
-          durationInMilliseconds = today - formattedStartDate;
-        } else if (today > formattedEndDate) {
-          // If today is after end date, set duration to total duration and percentage done to 100%
-          durationInMilliseconds = formattedEndDate - formattedStartDate;
-        } else {
-          // If today is between start date and end date, calculate partial duration
-          durationInMilliseconds = today - formattedStartDate;
-        }
-
-        const totalDurationInMilliseconds =
-          formattedEndDate - formattedStartDate;
-        let percentageDone;
-
-        if (today >= formattedEndDate) {
-          percentageDone = 100;
-        } else {
-          percentageDone =
-            (durationInMilliseconds / totalDurationInMilliseconds) * 100;
-        }
-
-        return [
-          activityId,
-          `${item.activityName}: ${firstName} ${lastName}`,
-          userProfession[profession],
-          formattedStartDate,
-          formattedEndDate,
-          null,
-          percentageDone,
-          null,
-        ];
-      });
-    }
 
 export  const AddSerialNumber = (itemList, currentPage, PageSize) => {
   return itemList.map((item, index) =>{
@@ -225,6 +167,67 @@ export const addNairaKobo = (amounts) => {
   return totalNaira.toFixed(2); // Ensure two decimal places for currency representation
 };
 
+
+// export function generateNewArray(items) {
+//       return items.map((item) => {
+//         const {
+//           activityId,
+//           firstName,
+//           lastName,
+//           profession,
+//           startDate,
+//           endDate,
+//         } = item;
+
+//         const formattedStartDate = new Date(startDate);
+//         const formattedEndDate = new Date(endDate);
+//         const today = new Date();
+//         let durationInMilliseconds;
+
+//         if (formattedEndDate < formattedStartDate) {
+//           // If end date is before start date, set duration to 0
+//           durationInMilliseconds = 0;
+//         } else if (today < formattedStartDate) {
+//           // If today is before start date, set duration to 0
+//           durationInMilliseconds = 0;
+//         } else if (
+//           today.getTime() === formattedStartDate.getTime() &&
+//           today.getHours() < formattedEndDate.getHours()
+//         ) {
+//           // If today's date is the same as the start date and the time of today is before the time of end date, calculate percentage
+//           durationInMilliseconds = today - formattedStartDate;
+//         } else if (today > formattedEndDate) {
+//           // If today is after end date, set duration to total duration and percentage done to 100%
+//           durationInMilliseconds = formattedEndDate - formattedStartDate;
+//         } else {
+//           // If today is between start date and end date, calculate partial duration
+//           durationInMilliseconds = today - formattedStartDate;
+//         }
+
+//         const totalDurationInMilliseconds =
+//           formattedEndDate - formattedStartDate;
+//         let percentageDone;
+
+//         if (today >= formattedEndDate) {
+//           percentageDone = 100;
+//         } else {
+//           percentageDone =
+//             (durationInMilliseconds / totalDurationInMilliseconds) * 100;
+//         }
+
+//         return [
+//           activityId,
+//           `${item.activityName}: ${firstName} ${lastName}`,
+//           userProfession[profession],
+//           formattedStartDate,
+//           formattedEndDate,
+//           null,
+//           percentageDone,
+//           null,
+//         ];
+//       });
+//     }
+
 export function getNumberOfWeeksInMonth(year, month) {
    // Create a Date object for the first day of the month
   const firstDay = new Date(year, month - 1, 1);
@@ -260,3 +263,77 @@ export function getNumberOfWeeksInMonth(year, month) {
 export const generalMessage = "An error occurred. Try Again"
 
  
+
+
+
+
+
+
+
+
+
+
+
+export function generateNewArray(items) {
+  return items.map((item) => {
+    const {
+      activityId,
+      firstName,
+      lastName,
+      profession,
+      startDate,
+      endDate,
+    } = item;
+
+    // Convert startDate to a Date object
+    const formattedStartDate = new Date(startDate);
+
+    // Convert endDate string with time back to a Date object
+    const formattedEndDate = isValid(parse(endDate, 'yyyy-MM-dd HH:mm', new Date())) ? parse(endDate, 'yyyy-MM-dd HH:mm', new Date()) : new Date();
+
+    const today = new Date();
+    let durationInMilliseconds;
+
+    if (formattedEndDate < formattedStartDate) {
+      // If end date is before start date, set duration to 0
+      durationInMilliseconds = 0;
+    } else if (today < formattedStartDate) {
+      // If today is before start date, set duration to 0
+      durationInMilliseconds = 0;
+    } else if (
+      today.getTime() === formattedStartDate.getTime() &&
+      today.getHours() < formattedEndDate.getHours()
+    ) {
+      // If today's date is the same as the start date and the time of today is before the time of end date, calculate percentage
+      durationInMilliseconds = today - formattedStartDate;
+    } else if (today > formattedEndDate) {
+      // If today is after end date, set duration to total duration and percentage done to 100%
+      durationInMilliseconds = formattedEndDate - formattedStartDate;
+    } else {
+      // If today is between start date and end date, calculate partial duration
+      durationInMilliseconds = today - formattedStartDate;
+    }
+
+    const totalDurationInMilliseconds =
+      formattedEndDate - formattedStartDate;
+    let percentageDone;
+
+    if (today >= formattedEndDate) {
+      percentageDone = 100;
+    } else {
+      percentageDone =
+        (durationInMilliseconds / totalDurationInMilliseconds) * 100;
+    }
+
+    return [
+      activityId,
+      `${item.activityName}: ${firstName} ${lastName}`,
+      userProfession[profession],
+      formattedStartDate,
+      formattedEndDate,
+      null,
+      percentageDone,
+      null,
+    ];
+  });
+}
