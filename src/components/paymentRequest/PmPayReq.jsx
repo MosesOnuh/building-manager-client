@@ -129,7 +129,6 @@ const PmPayReq = ({ userInfo }) => {
                 { value: "2", text: "Awaiting Confirmation" },
                 { value: "3", text: "Confirmed" },
                 { value: "4", text: "Rejected" },
-                { value: "5", text: "Done" },
               ]}
             />
           </div>
@@ -1193,7 +1192,10 @@ const SingleRequestView = ({
       toastId.current = toast.loading("Loading...");
       await payReqConfirmationReq(`/PaymentRequest/PM/Confirmation`, reqbody);
 
-      setFormData({ ...formData, status: action });
+      const today = new Date();
+      const dateInputValue = format(today, "yyyy-MM-dd");
+
+      setFormData({ ...formData, status: action, confirmedAt: dateInputValue });
 
       handlePageRefresh();
       toast.update(toastId.current, {
@@ -2037,8 +2039,10 @@ const MultipleRequestView = ({
     try {
       toastId.current = toast.loading("Loading...");
       await payReqConfirmationReq(`/PaymentRequest/PM/Confirmation`, reqbody);
+      const today = new Date();
+      const dateInputValue = format(today, "yyyy-MM-dd");
 
-      setFormData({ ...formData, status: action });
+      setFormData({ ...formData, status: action, confirmedAt: dateInputValue });
 
       handlePageRefresh();
       toast.update(toastId.current, {
@@ -2300,7 +2304,11 @@ const MultipleRequestView = ({
             <div className="w-1/4 min-w-fit">
               <FormItemDisplay
                 title={"Date Rejected"}
-                value={formData?.confirmedAt ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd") : "No date"}
+                value={
+                  formData?.confirmedAt
+                    ? format(new Date(formData?.confirmedAt), "yyyy-MM-dd")
+                    : "No date"
+                }
               />
             </div>
           )}
