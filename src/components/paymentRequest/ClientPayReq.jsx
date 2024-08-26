@@ -95,7 +95,6 @@ const ClientPayReq = ({ userInfo }) => {
                   { value: "2", text: "Awaiting Confirmation" },
                   { value: "3", text: "Confirmed" },
                   { value: "4", text: "Rejected" },
-                  { value: "5", text: "Done" },
                 ]}
               />
             </div>
