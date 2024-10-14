@@ -35,9 +35,7 @@ const Homepage = () => {
           </div>
         </div>
       </div> */}
-      <div
-        className=" flex-col sm:flex-row w-4/5 flex mt-10 h-4/5"
-      >
+      <div className=" flex-col sm:flex-row w-4/5 flex mt-10 h-4/5">
         <div className="w-full md:block md:w-2/4 h-full home-image"></div>
         <div className="w-full md:w-2/4 h-full sm:flex items-center justify-center">
           <div className=" flex flex-col justify-evenly ml-2 h-3/5">
@@ -45,7 +43,7 @@ const Homepage = () => {
             <p className="text-3xl md:text-5xl text-center font-inter font-bold">
               Building Manager
             </p>
-            <p className="text-center w-4/5 mx-auto">
+            <p className="text-center md:text-2xl italic w-4/5 mx-auto">
               The number one tool for managing Housing Construction Works
             </p>
           </div>
