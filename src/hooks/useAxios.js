@@ -5,7 +5,7 @@ import useRefreshToken from "./useRefreshToken";
 
 const useAxios = () => {
     const refresh = useRefreshToken();
-    const { auth } = useAuth();
+    const { setAuth, auth } = useAuth();
     
     useEffect(() =>{
         privateApi.interceptors.request.use(
@@ -25,13 +25,30 @@ const useAxios = () => {
                     prevRequest.sent = true;
                     const refToken = sessionStorage.getItem('refreshToken');
                     console.log("token passed:  " + refToken);
-                    const newAccessToken = await refresh({"refreshToken": refToken});
-                    // console.log("--------new token request " + newAccessToken)
-                    // const newToken = sessionStorage.getItem('accessToken');
-                    // prevRequest.headers['Authorization'] = `Bearer ${newToken}`;
-                    prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                    return privateApi(prevRequest);
-                }
+
+                    //try catch and log user out if error occurs. 29 to 35, added
+                    //try {
+                        const newAccessToken = await refresh({"refreshToken": refToken});
+                        // console.log("--------new token request " + newAccessToken)
+                        // const newToken = sessionStorage.getItem('accessToken');
+                        // prevRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                        return privateApi(prevRequest);
+                    // }catch (err){
+                    //     setAuth({});
+                    // sessionStorage.removeItem("accessToken");
+                    //     sessionStorage.removeItem("refreshToken");
+                    // }
+                    
+               }
+            //    else if (error.response.status === 401 && prevRequest?.sent ){
+
+            //         log user out
+            //         setAuth({});
+            //         sessionStorage.removeItem("accessToken");
+            //         sessionStorage.removeItem("refreshToken");
+            //     } 
+
                 return Promise.reject(error);
             }
         );

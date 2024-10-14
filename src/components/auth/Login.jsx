@@ -5,6 +5,7 @@ import { accessToken, refreshToken } from "../../utils/constants";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import  "./Login.css"
 
 const Login = () => {
   const { auth, setAuth } = useAuth();
